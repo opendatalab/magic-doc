@@ -1,3 +1,11 @@
+import os
+
+
+MODEL_LAYOUT_PATH_VAR = "MAGIC_DOC_LAYOUT_MODEL_PATH" # 模型路径环境变量
+MODEL_EQUATION_RECOG_PATH_VAR = "MAGIC_DOC_EQUATION_RECOG_MODEL_PATH" # 公式识别模型路径环境变量
+MODEL_EQUATION_DETECT_PATH_VAR = "MAGIC_DOC_EQUATION_DETECT_MODEL_PATH" # 公式检测模型路径环境变量
+
+
 
 
 class ConvException(Exception):
@@ -24,7 +32,18 @@ class DocConverter(object):
         if self.__s3cfg:
             self.__s3cli = S3Client(self.__s3cfg) # TODO
         self.__temp_dir = temp_dir
-        self.__conv_timeout = conv_timeout # 转换超时时间，单位秒        
+        self.__conv_timeout = conv_timeout # 转换超时时间，单位秒      
+        
+        """
+        从环境变量加载模型路径
+        """  
+        self.__model_equation_recog_path = os.getenv(MODEL_EQUATION_RECOG_PATH_VAR)
+        self.__model_equation_detect_path = os.getenv(MODEL_EQUATION_DETECT_PATH_VAR)
+        self.__model_layout_path = os.getenv(MODEL_LAYOUT_PATH_VAR)
+        if not self.__model_equation_recog_path or not self.__model_equation_detect_path or not self.__model_layout_path:
+            raise ConvException("Model path not found in environment variables: %s, %s, %s" % (MODEL_EQUATION_RECOG_PATH_VAR, MODEL_EQUATION_DETECT_PATH_VAR, MODEL_LAYOUT_PATH_VAR))
+        else:
+            pass # TODO 初始化模型
 
     def convert(self, doc_path:str, progress_file_path:str, conv_timeout=None):
         """

@@ -103,7 +103,7 @@ class Layoutlmv3_Predictor(object):
     def __init__(self, weights):
         current_path = os.path.dirname(os.path.realpath(__file__))
         layout_args = {
-            "config_file": os.path.join(current_path, "layoutlmv3_base_inference.yaml"),
+            "config_file": os.path.join(current_path, "layoutlmv3_base_inference.yaml"), # TODO 修改配置路径
             "resume": False,
             "eval_only": False,
             "num_gpus": 1,

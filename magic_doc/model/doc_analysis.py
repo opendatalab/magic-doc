@@ -50,7 +50,7 @@ class DocAnalysis(object):
       class definition of DocAnalysis module: 
     """
 
-    def __init__(self, configs="magic_doc/model/model_configs.yaml", **kwargs):
+    def __init__(self, configs="magic_doc/resources/model/model_configs.yaml", **kwargs):
         """
         Description:
           initialize the class instance
@@ -78,7 +78,7 @@ class DocAnalysis(object):
         self.layout_model = Layoutlmv3_Predictor(self.configs['weights']['layout'])
         if self.apply_formula:
             self.mfd_model = YOLO(self.configs['weights']['mfd'])
-            args = argparse.Namespace(cfg_path="magic_doc/model/sub_modules/UniMERNet/configs/demo_old.yaml", options=None)
+            args = argparse.Namespace(cfg_path="magic_doc/resources/model/UniMERNet/demo_old.yaml", options=None)
             cfg = Config(args)
             cfg.config.model.pretrained = os.path.join(self.configs['weights']['mfr'], "pytorch_model.bin")
             cfg.config.model.model_config.model_name = self.configs['weights']['mfr']

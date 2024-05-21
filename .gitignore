@@ -1,0 +1,17 @@
+*.ipynb*
+*.ipynb
+*.png
+*.jpg
+*.pdf
+
+# python
+.ipynb_checkpoints
+*.ipynb
+**/__pycache__/
+
+# vscode
+.vscode
+
+# logs
+*.log
+*.out

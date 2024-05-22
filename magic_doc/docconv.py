@@ -1,4 +1,7 @@
 import os
+from func_timeout import func_timeout, FunctionTimedOut
+from loguru import logger
+
 
 
 MODEL_LAYOUT_PATH_VAR = "MAGIC_DOC_LAYOUT_MODEL_PATH" # 模型路径环境变量
@@ -45,13 +48,23 @@ class DocConverter(object):
         else:
             pass # TODO 初始化模型
 
-    def convert(self, doc_path:str, progress_file_path:str, conv_timeout=None):
+    def convert(self, doc_path:str, progress_file_path:str, conv_timeout=None, to_format="markdown"):
         """
+        在线快速解析
         doc_path: str, path to the document, support local file path and s3 path.
         progress_file_path: str, path to the progress file, support local file path only.
         return markdown string or raise ConvException.
         """
         conv_timeout = conv_timeout or self.__conv_timeout # 根据这个时间判断函数超时
         markdown_string = ""
-        # TODO
+        try:
+            markdown_string = func_timeout(self.__conv_timeout, some_function, args=(arg1,)) # TODO
+        except FunctionTimedOut as e1:
+            logger.exception(e1)
+            raise ConvException("Convert timeout.")
+        except Exception as e2:
+            logger.exception(e2)
+            raise ConvException("Convert failed: %s" % str(e2))
+            
         return markdown_string
+    

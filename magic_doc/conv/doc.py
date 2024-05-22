@@ -13,18 +13,20 @@ class Doc(Base):
         return "\n".join([c['data'] for c in content_list])
 
     def doc_to_contentlist(self, bits) -> list[Page]:
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            temp_dir = Path(tmpdirname)
-            file_path = temp_dir / "tmp.doc"
-            file_path.write_bytes(bits)
-            doc_extractor = DocExtractor()
-            cwd_path = Path.cwd() / Path("../bin/linux")
-            bin_path = cwd_path / "antiword"
-            os.chmod(bin_path, 0o755)
-            pic_dir = temp_dir / "pic"
-            if not Path(pic_dir).exists():
-                pic_dir.mkdir()
-            contentlist = doc_extractor.extract(file_path, "1", temp_dir, temp_dir, True, cwd_path=cwd_path)
+
+        temp_dir = Path("/tmp")
+        pic_dir = temp_dir / "pic"
+        if not Path(pic_dir).exists():
+            pic_dir.mkdir()
+        os.remove(pic_dir / "*")
+        os.remove(temp_dir / "text")
+        file_path = temp_dir / "tmp.doc"
+        file_path.write_bytes(bits)
+        doc_extractor = DocExtractor()
+        cwd_path = Path.cwd() / Path("../bin/linux")
+        bin_path = cwd_path / "antiword"
+        os.chmod(bin_path, 0o755)
+        contentlist = doc_extractor.extract(file_path, "1", temp_dir, temp_dir, True, cwd_path=cwd_path)
 
         return contentlist
 

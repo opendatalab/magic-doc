@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 
@@ -17,8 +18,9 @@ class Doc(Base):
             file_path = temp_dir / "tmp.doc"
             file_path.write_bytes(bits)
             doc_extractor = DocExtractor()
-            bin_path = Path("../bin/linux")
-            cwd_path = Path.cwd() / bin_path
+            cwd_path = Path.cwd() / Path("../bin/linux")
+            bin_path = cwd_path / "antiword"
+            os.chmod(bin_path, 0o755)
             pic_dir = temp_dir / "pic"
             if not Path(pic_dir).exists():
                 pic_dir.mkdir()

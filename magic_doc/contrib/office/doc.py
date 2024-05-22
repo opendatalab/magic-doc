@@ -56,12 +56,12 @@ class DocExtractor(OfficeExtractor):
         with open(pure_text_path, "r") as f:
             content = f.read()
 
-        img_map: dict[Path, str] = {}
-        imgs = media_dir.glob("*")
-        for img in imgs:
-            img_map[img] = self.generate_img_path(id, img.name)
-
-        self.upload_background(id, img_map)
+        # img_map: dict[Path, str] = {}
+        # imgs = media_dir.glob("*")
+        # for img in imgs:
+        #     img_map[img] = self.generate_img_path(id, img.name)
+        #
+        # self.upload_background(id, img_map)
 
         pages = [
             Page(page_no=idx, content=x)

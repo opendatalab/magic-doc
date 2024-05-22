@@ -1,6 +1,8 @@
 import os
-import shutil
+import tempfile
 from pathlib import Path
+
+from loguru import logger
 
 from magic_doc.contrib.model import Page
 from magic_doc.contrib.office.doc import DocExtractor
@@ -9,32 +11,37 @@ from magic_doc.conv.base import Base
 
 class Doc(Base):
     def to_md(self, bits: bytes) -> str:
-        content_list = self.doc_to_contentlist(bits)
-        return "\n".join([c['data'] for c in content_list])
+        mid_json = self.doc_to_contentlist(bits)
+        md_content_list = []
+        for page in mid_json:
+            page_content_list = page['content_list']
+            for content in page_content_list:
+                if content['type'] == 'image':
+                    pass
+                elif content['type'] == "text":
+                    data = content['data']
+                    md_content_list.append(data)
+        return "\n".join(md_content_list)
 
     def doc_to_contentlist(self, bits) -> list[Page]:
-
-        temp_dir = Path("/tmp")
-        pic_dir = temp_dir / "pic"
-        if not Path(pic_dir).exists():
-            pic_dir.mkdir()
-        shutil.rmtree(pic_dir)
-        text_path = temp_dir / "text"
-        if text_path.exists():
-            os.remove(text_path)
-        file_path = temp_dir / "tmp.doc"
-        if file_path.exists():
-            os.remove(file_path)
-        file_path.write_bytes(bits)
-        doc_extractor = DocExtractor()
-        cwd_path = Path.cwd() / Path("../bin/linux")
-        bin_path = cwd_path / "antiword"
-        os.chmod(bin_path, 0o755)
-        contentlist = doc_extractor.extract(file_path, "1", temp_dir, temp_dir, True, cwd_path=cwd_path)
+        with tempfile.TemporaryDirectory() as temp_path:
+            temp_dir = Path(temp_path)
+            media_dir = temp_dir / "media"
+            if not media_dir.exists():
+                media_dir.mkdir()
+            file_path = temp_dir / "tmp.doc"
+            if file_path.exists():
+                os.remove(file_path)
+            file_path.write_bytes(bits)
+            doc_extractor = DocExtractor()
+            cwd_path = Path.cwd() / Path("../bin/linux")
+            bin_path = cwd_path / "antiword"
+            os.chmod(bin_path, 0o755)
+            contentlist = doc_extractor.extract(file_path, "1", temp_dir, media_dir, True, cwd_path=cwd_path)
 
         return contentlist
 
 
 if __name__ == '__main__':
     doc = Doc()
-    print(doc.to_md(Path(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图1.doc").read_bytes()))
+    logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes()))

@@ -26,3 +26,4 @@ def test_conv_s3file():
             assert False, f"Failed to convert {doc}, Reason: {e.message}"
         except Exception as e:
             assert False, f"Failed to convert {doc}: {e}"
+            

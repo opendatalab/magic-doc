@@ -1,0 +1,6 @@
+
+
+
+class NotSupportOcrPDFException(BaseException):
+    pass
+

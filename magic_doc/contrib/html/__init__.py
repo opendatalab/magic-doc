@@ -2,7 +2,7 @@ from abc import ABC
 from pathlib import Path
 from werkzeug.datastructures import FileStorage
 
-from pedia_document_parser.model import ExtractResponse, Extractor
+from magic_doc.contrib.model import ExtractResponse, Extractor
 
 
 class HtmlExtractor(Extractor, ABC):

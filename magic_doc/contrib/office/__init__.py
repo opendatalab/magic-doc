@@ -12,7 +12,7 @@ from loguru import logger
 from werkzeug.datastructures import FileStorage
 
 from pedia_document_parser.config import Config
-from pedia_document_parser.model import ExtractResponse, Extractor
+from magic_doc.contrib.model import ExtractResponse, Extractor
 from pedia_document_parser.s3.client import S3Client
 
 

@@ -10,8 +10,8 @@ from loguru import logger
 
 from werkzeug.datastructures import FileStorage
 
-from pedia_document_parser.office import OfficeExtractor
-from pedia_document_parser.model import ExtractResponse, Content, Page
+from magic_doc.contrib.office import OfficeExtractor
+from magic_doc.contrib.model import ExtractResponse, Content, Page
 from pedia_document_parser.config import Config
 
 ext_map: dict[str, str] = {

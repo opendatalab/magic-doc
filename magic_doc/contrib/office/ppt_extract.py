@@ -6,8 +6,8 @@ from pathlib import Path
 
 from werkzeug.datastructures import FileStorage
 
-from pedia_document_parser.office import OfficeExtractor
-from pedia_document_parser.model import ExtractResponse
+from magic_doc.contrib.office import OfficeExtractor
+from magic_doc.contrib.model import ExtractResponse
 
 
 class PptExtractor(OfficeExtractor):

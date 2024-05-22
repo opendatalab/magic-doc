@@ -2,8 +2,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 from pathlib import Path
-from pedia_document_parser.model import ExtractResponse, Content, Page
-from pedia_document_parser.office import OfficeExtractor
+from magic_doc.contrib.model import ExtractResponse, Content, Page
+from magic_doc.contrib.office import OfficeExtractor
 from typing import IO
 from werkzeug.datastructures import FileStorage
 

@@ -3,7 +3,7 @@ import random
 import fitz
 import io
 
-from pedia_document_parser.model import (
+from magic_doc.contrib.model import (
     ExtractResponse,
     Extractor,
     Page,

@@ -7,8 +7,8 @@ from subprocess import Popen
 
 from werkzeug.datastructures import FileStorage
 
-from pedia_document_parser.office import OfficeExtractor
-from pedia_document_parser.model import Page, Content, ExtractResponse
+from magic_doc.contrib.office import OfficeExtractor
+from magic_doc.contrib.model import Page, Content, ExtractResponse
 
 
 class DocExtractor(OfficeExtractor):

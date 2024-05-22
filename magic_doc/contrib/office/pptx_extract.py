@@ -17,8 +17,8 @@ from pptx.slide import Slide
 from pptx.shapes.group import GroupShape
 from werkzeug.datastructures import FileStorage
 
-from pedia_document_parser.office import OfficeExtractor
-from pedia_document_parser.model import ExtractResponse, Page, Content
+from magic_doc.contrib.office import OfficeExtractor
+from magic_doc.contrib.model import ExtractResponse, Page, Content
 
 
 class PptxExtractor(OfficeExtractor):

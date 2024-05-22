@@ -11,36 +11,36 @@ from typing import Tuple
 from loguru import logger
 from werkzeug.datastructures import FileStorage
 
-from pedia_document_parser.config import Config
+# from pedia_document_parser.config import Config
 from magic_doc.contrib.model import ExtractResponse, Extractor
-from pedia_document_parser.s3.client import S3Client
+# from pedia_document_parser.s3.client import S3Client
 
 
 class OfficeExtractor(Extractor, ABC):
     def __init__(self) -> None:
         super().__init__()
-        self.config = Config()
+        # self.config = Config()
         self.tpe = ThreadPoolExecutor(max_workers=30)
         self.counter = {}
         self.tmp_dir = Path("/tmp")
 
-    def generate_img_path(self, id: str, image_name: str) -> str:
-        return f"s3://{self.config.s3_bucket}/{datetime.today().strftime('%Y-%m-%d')}/{id}/{image_name}"
+    # def generate_img_path(self, id: str, image_name: str) -> str:
+    #     return f"s3://{self.config.s3_bucket}/{datetime.today().strftime('%Y-%m-%d')}/{id}/{image_name}"
+    #
+    # def upload(self, id: str, s3_path: str, path: Path) -> Tuple[str, str]:
+    #     cli = S3Client(self.config.s3_ak, self.config.s3_sk, self.config.s3_ep)
+    #     cli.upload_file(s3_path, path.absolute().as_posix())
+    #     return (id, s3_path)
 
-    def upload(self, id: str, s3_path: str, path: Path) -> Tuple[str, str]:
-        cli = S3Client(self.config.s3_ak, self.config.s3_sk, self.config.s3_ep)
-        cli.upload_file(s3_path, path.absolute().as_posix())
-        return (id, s3_path)
-
-    def upload_background(self, id: str, img_map: dict[Path, str]):
-        if len(img_map) == 0:
-            self.clean_up(id)
-            return
-
-        self.counter[id] = len(img_map)
-        for src, dest in img_map.items():
-            fut = self.tpe.submit(self.upload, id, dest, src)
-            fut.add_done_callback(self.on_upload_succ)
+    # def upload_background(self, id: str, img_map: dict[Path, str]):
+    #     if len(img_map) == 0:
+    #         self.clean_up(id)
+    #         return
+    #
+    #     self.counter[id] = len(img_map)
+    #     for src, dest in img_map.items():
+    #         fut = self.tpe.submit(self.upload, id, dest, src)
+    #         fut.add_done_callback(self.on_upload_succ)
 
     def clean_up(self, id: str):
         dir = self.get_dir_by_id(id).absolute().as_posix()

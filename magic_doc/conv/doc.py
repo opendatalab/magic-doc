@@ -17,7 +17,12 @@ class Doc(Base):
             file_path = temp_dir / "tmp.doc"
             file_path.write_bytes(bits)
             doc_extractor = DocExtractor()
-            contentlist = doc_extractor.extract(file_path, "1", temp_dir, temp_dir, True, cwd_path="magic_doc/bin/linux")
+            bin_path = Path("../bin/linux")
+            cwd_path = Path.cwd() / bin_path
+            pic_dir = temp_dir / "pic"
+            if not Path(pic_dir).exists():
+                pic_dir.mkdir()
+            contentlist = doc_extractor.extract(file_path, "1", temp_dir, temp_dir, True, cwd_path=cwd_path)
 
         return contentlist
 

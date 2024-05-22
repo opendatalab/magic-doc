@@ -39,8 +39,7 @@ class DocExtractor(OfficeExtractor):
         else:
             cmd = f"./antiword -f -i 3 -o {dir.as_posix()} {doc_path.as_posix()}"
         logger.info(f"cmd: {cmd}")
-        cwd_path = Path(cwd_path)
-        process = Popen(cmd, shell=True, cwd=cwd_path)
+        process = Popen(cmd, shell=True, cwd=Path(cwd_path))
         process.wait()
 
         shutil.rmtree(media_dir.absolute().as_posix())

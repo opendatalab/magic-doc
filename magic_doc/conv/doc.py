@@ -1,5 +1,5 @@
 import os
-import tempfile
+import shutil
 from pathlib import Path
 
 from magic_doc.contrib.model import Page
@@ -18,9 +18,13 @@ class Doc(Base):
         pic_dir = temp_dir / "pic"
         if not Path(pic_dir).exists():
             pic_dir.mkdir()
-        os.remove(pic_dir / "*")
-        os.remove(temp_dir / "text")
+        shutil.rmtree(pic_dir)
+        text_path = temp_dir / "text"
+        if text_path.exists():
+            os.remove(text_path)
         file_path = temp_dir / "tmp.doc"
+        if file_path.exists():
+            os.remove(file_path)
         file_path.write_bytes(bits)
         doc_extractor = DocExtractor()
         cwd_path = Path.cwd() / Path("../bin/linux")

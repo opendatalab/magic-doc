@@ -6,7 +6,7 @@ class Base(ABC):
         pass
 
     @abstractmethod
-    def to_md(self, bits: bytes) -> str:
+    def to_md(self, bits: bytes | str) -> str:
         return NotImplemented
 
 

@@ -1,15 +1,14 @@
-import requests
 import random
 import fitz
-import io
 
-from pedia_document_parser.model import (
+from magic_doc.contrib.model import (
     ExtractResponse,
     Extractor,
     Page,
     Content,
 )
-from pedia_document_parser.config import Config
+from magic_doc.contrib.wrapper_exceptions import NotSupportOcrPDFException
+
 from werkzeug.datastructures import FileStorage
 from loguru import logger
 
@@ -62,33 +61,18 @@ class PDFExtractor(Extractor):
             page_no += 1
         return pages
 
-    def run(self, file_parse_id: str, r: FileStorage, skip_image: bool = True) -> ExtractResponse:
-        config = Config()
+    def run(
+        self, file_parse_id: str, r: FileStorage, skip_image: bool = True
+    ) -> ExtractResponse:
         file_content = r.stream.read()
         with fitz.open(stream=file_content) as doc:
             if self.is_digital(doc):
                 logger.info(f"{file_parse_id} is digital pdf")
                 return self.get_text_with_pymupdf(doc)
-
-        files = [
-            (
-                "file",
-                (
-                    r.filename,
-                    io.BytesIO(file_content),
-                    "application/pdf",
-                ),
-            )
-        ]
-        resp = requests.post(
-            config.autopdf_server + "/autopdf/parse",
-            files=files,
-            timeout=config.autopdf_server_timeout,
-        )
-        return resp.json()["result"]
+        raise NotSupportOcrPDFException
 
 
 if __name__ == "__main__":
     pdf_extractor = PDFExtractor()
-    with open("test_data/pdf/STL.pdf", "rb") as f:
+    with open("magic_doc/contrib/test_data/pdf/test.pdf", "rb") as f:
         logger.info(pdf_extractor.run("test", FileStorage(f, filename="STL.pdf")))

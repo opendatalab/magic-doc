@@ -15,3 +15,7 @@
 # logs
 *.log
 *.out
+
+# debug directory
+debug/
+

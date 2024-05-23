@@ -7,9 +7,15 @@ from loguru import logger
 from magic_doc.contrib.model import Page
 from magic_doc.contrib.office.doc import DocExtractor
 from magic_doc.conv.base import BaseConv
+from magic_doc.progress.pupdator import ConvProgressUpdator
 
 
 class Doc(BaseConv):
+
+    def __init__(self, pupdator: ConvProgressUpdator):
+        super().__init__(pupdator)
+
+
     def to_md(self, bits: bytes) -> str:
         mid_json = self.doc_to_contentlist(bits)
         md_content_list = []
@@ -40,5 +46,6 @@ class Doc(BaseConv):
 
 
 if __name__ == '__main__':
-    doc = Doc()
+    pupdator = ConvProgressUpdator()
+    doc = Doc(pupdator)
     logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes()))

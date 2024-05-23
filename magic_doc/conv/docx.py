@@ -6,12 +6,18 @@ from loguru import logger
 
 from magic_doc.contrib.model import Content
 from magic_doc.conv.base import BaseConv
+from magic_doc.progress.pupdator import ConvProgressUpdator
 
 
 class Docx(BaseConv):
+    def __init__(self, pupdator: ConvProgressUpdator):
+        super().__init__(pupdator)
+
+
     def to_md(self, bits: bytes) -> str:
         content_list = self.docx_to_contentlist(bits)
         return "\n".join([c['data'] for c in content_list])
+
 
     def docx_to_contentlist(self, bits) -> list[Content]:
         tag_w = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
@@ -67,4 +73,5 @@ class Docx(BaseConv):
                 return content_list
 
 if __name__ == '__main__':
-    logger.info(Docx().to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read()))
+    pupdator = ConvProgressUpdator()
+    logger.info(Docx(pupdator).to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read()))

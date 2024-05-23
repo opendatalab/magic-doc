@@ -27,14 +27,11 @@ class Doc(BaseConv):
         with tempfile.TemporaryDirectory() as temp_path:
             temp_dir = Path(temp_path)
             media_dir = temp_dir / "media"
-            if not media_dir.exists():
-                media_dir.mkdir()
+            media_dir.mkdir()
             file_path = temp_dir / "tmp.doc"
-            if file_path.exists():
-                os.remove(file_path)
             file_path.write_bytes(bits)
             doc_extractor = DocExtractor()
-            cwd_path = Path.cwd() / Path("../bin/linux") # TODO pip之后路径还对吗
+            cwd_path = os.path.dirname(os.path.abspath(__file__)) / Path("../bin/linux")
             bin_path = cwd_path / "antiword"
             os.chmod(bin_path, 0o755)
             contentlist = doc_extractor.extract(file_path, "1", temp_dir, media_dir, True, cwd_path=cwd_path)

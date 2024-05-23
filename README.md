@@ -1,5 +1,5 @@
 # Magic-Doc
-convert doc（doc/docx/ppt/pptx）to markdown
+convert doc（pdf/html/doc/docx/ppt/pptx）to markdown
 
 
 ## TODO

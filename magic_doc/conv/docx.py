@@ -5,10 +5,10 @@ import xml.etree.ElementTree as ET
 from loguru import logger
 
 from magic_doc.contrib.model import Content
-from magic_doc.conv.base import Base
+from magic_doc.conv.base import BaseConv
 
 
-class Docx(Base):
+class Docx(BaseConv):
     def to_md(self, bits: bytes) -> str:
         content_list = self.docx_to_contentlist(bits)
         return "\n".join([c['data'] for c in content_list])

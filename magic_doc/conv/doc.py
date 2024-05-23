@@ -6,10 +6,10 @@ from loguru import logger
 
 from magic_doc.contrib.model import Page
 from magic_doc.contrib.office.doc import DocExtractor
-from magic_doc.conv.base import Base
+from magic_doc.conv.base import BaseConv
 
 
-class Doc(Base):
+class Doc(BaseConv):
     def to_md(self, bits: bytes) -> str:
         mid_json = self.doc_to_contentlist(bits)
         md_content_list = []
@@ -34,7 +34,7 @@ class Doc(Base):
                 os.remove(file_path)
             file_path.write_bytes(bits)
             doc_extractor = DocExtractor()
-            cwd_path = Path.cwd() / Path("../bin/linux")
+            cwd_path = Path.cwd() / Path("../bin/linux") # TODO pip之后路径还对吗
             bin_path = cwd_path / "antiword"
             os.chmod(bin_path, 0o755)
             contentlist = doc_extractor.extract(file_path, "1", temp_dir, media_dir, True, cwd_path=cwd_path)

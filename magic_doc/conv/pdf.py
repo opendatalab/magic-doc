@@ -3,10 +3,10 @@ from io import BytesIO
 from werkzeug.datastructures import FileStorage
 
 from magic_doc.contrib.pdf.pdf_extractor import PDFExtractor
-from magic_doc.conv.base import Base
+from magic_doc.conv.base import BaseConv
 
 
-class Pdf(Base):
+class Pdf(BaseConv):
     def to_md(self, bits: bytes | str) -> str:
         # TODO: 单例化模型
         pdf_extractor = PDFExtractor()

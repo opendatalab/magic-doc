@@ -1,1 +1,4 @@
 func-timeout==4.3.5
+boto3==1.17.108
+smart_open[s3]
+werkzeug

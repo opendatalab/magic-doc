@@ -8,5 +8,7 @@ class FileBaseProgressUpdator(ConvProgressUpdator):
         self.__progress_file_path = progress_file_path
     
     def do_update(self, progress:int) -> bool:
-        # TODO
+        with open(self.__progress_file_path, 'w', encoding='utf-8') as fout:
+            fout.write(str(int(progress)))
+            
         return True

@@ -13,11 +13,12 @@ class Docx(BaseConv):
     def __init__(self, pupdator: ConvProgressUpdator):
         super().__init__(pupdator)
 
-
     def to_md(self, bits: bytes) -> str:
         content_list = self.docx_to_contentlist(bits)
-        return "\n".join([c['data'] for c in content_list])
-
+        content_data_list = []
+        for content in content_list:
+            content_data_list.append(content['data'])
+        return "\n".join(content_data_list)
 
     def docx_to_contentlist(self, bits) -> list[Content]:
         tag_w = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
@@ -30,7 +31,11 @@ class Docx(BaseConv):
                 tree = ET.XML(xml_content)
                 body = tree.find(tag_body)
 
-                for child in body:
+                total = len(body)
+                for index, child in enumerate(body):
+                    progress = int(index/total*100)
+                    # logger.info(f"progress: {progress}")
+                    self._progress_updator.update(progress)
                     tag = child.tag.split("}")[-1]
                     match tag:
                         case "p":
@@ -72,6 +77,8 @@ class Docx(BaseConv):
                             print(unknown)
                 return content_list
 
+
 if __name__ == '__main__':
     pupdator = ConvProgressUpdator()
-    logger.info(Docx(pupdator).to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read()))
+    logger.info(
+        Docx(pupdator).to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read()))

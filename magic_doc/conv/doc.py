@@ -15,13 +15,16 @@ class Doc(BaseConv):
     def __init__(self, pupdator: ConvProgressUpdator):
         super().__init__(pupdator)
 
-
     def to_md(self, bits: bytes) -> str:
         mid_json = self.doc_to_contentlist(bits)
         md_content_list = []
         for page in mid_json:
             page_content_list = page['content_list']
-            for content in page_content_list:
+            total = len(page_content_list)
+            for index, content in enumerate(page_content_list):
+                progress = 50 + int(index / total * 50)
+                # logger.info(f"progress: {progress}")
+                self._progress_updator.update(progress)
                 if content['type'] == 'image':
                     pass
                 elif content['type'] == "text":
@@ -41,7 +44,7 @@ class Doc(BaseConv):
             bin_path = cwd_path / "antiword"
             os.chmod(bin_path, 0o755)
             contentlist = doc_extractor.extract(file_path, "1", temp_dir, media_dir, True, cwd_path=cwd_path)
-
+            self._progress_updator.update(50)
         return contentlist
 
 

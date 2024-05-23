@@ -42,3 +42,4 @@ Werkzeug==3.0.3
 boto3==1.17.108
 smart_open[s3]
 werkzeug
+python-pptx

@@ -107,7 +107,7 @@ class PptxExtractor(OfficeExtractor):
 
             pages.append(page)
 
-        self.upload_background(id, img_map)
+        # self.upload_background(id, img_map)
 
         return pages
 

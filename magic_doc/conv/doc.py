@@ -6,10 +6,10 @@ from loguru import logger
 
 from magic_doc.contrib.model import Page
 from magic_doc.contrib.office.doc import DocExtractor
-from magic_doc.conv.base import Base
+from magic_doc.conv.base import BaseConv
 
 
-class Doc(Base):
+class Doc(BaseConv):
     def to_md(self, bits: bytes) -> str:
         mid_json = self.doc_to_contentlist(bits)
         md_content_list = []
@@ -41,5 +41,4 @@ class Doc(Base):
 
 if __name__ == '__main__':
     doc = Doc()
-    # logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes()))
-    logger.info(doc.to_md(Path(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图1.doc").read_bytes()))
+    logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes()))

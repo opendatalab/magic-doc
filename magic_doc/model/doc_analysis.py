@@ -186,3 +186,27 @@ class DocAnalysis(object):
             logging.info("ocr time: {}".format(round(b-a, 2)))
 
         return doc_layout_result
+
+if __name__ == "__main__":
+    doc_proc = DocAnalysis(apply_ocr=True, apply_layout=True, apply_formula=False)
+    import os
+
+    import fitz
+    import numpy as np
+    from PIL import Image
+    from tqdm import tqdm
+
+    def get_images(pdf_path, dpi=72):
+        images = []
+        doc = fitz.open(pdf_path)
+        for i in range(len(doc)):
+            page = doc[i]
+            pix = page.get_pixmap(matrix=fitz.Matrix(dpi / 72, dpi / 72))
+            image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            # images.append(image)
+            images.append(np.array(image)[:, :, ::-1])
+        return images
+
+    images = get_images("/opt/data/pdf/20240423/pdf_test2/tc.2013.10.pdf")
+    results = doc_proc(images)
+    print(results)

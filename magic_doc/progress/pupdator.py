@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 
 
-class ConvProgressUpdator(object):
+class ConvProgressUpdator(ABC):
     def __init__(self):
         pass
 

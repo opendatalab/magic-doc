@@ -14,6 +14,8 @@ from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
 from smart_open import open
 
+from magic_doc.progress.filepupdator import FileBaseProgressUpdator
+
 
 MODEL_LAYOUT_PATH_VAR = "MAGIC_DOC_LAYOUT_MODEL_PATH"  # 模型路径环境变量
 MODEL_EQUATION_RECOG_PATH_VAR = "MAGIC_DOC_EQUATION_RECOG_MODEL_PATH"  # 公式识别模型路径环境变量
@@ -118,9 +120,10 @@ class DocConverter(object):
         conv_timeout = conv_timeout or self.__conv_timeout  # 根据这个时间判断函数超时
         markdown_string = ""
         try:
+            prog_updator = FileBaseProgressUpdator(progress_file_path)
             conv: BaseConv = self.__select_conv(doc_path)
             byte_content = self.__read_file_as_bytes(doc_path)
-            markdown_string = func_timeout(self.__conv_timeout, conv.to_md, args=(byte_content,))
+            markdown_string = func_timeout(self.__conv_timeout, conv.to_md, args=(byte_content, prog_updator))
         except FunctionTimedOut as e1:
             logger.exception(e1)
             raise ConvException("Convert timeout.")

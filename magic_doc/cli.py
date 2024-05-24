@@ -4,7 +4,7 @@ import traceback
 from datetime import datetime
 import click
 from pathlib import Path
-from magic_doc.docconv import DocConverter
+from magic_doc.docconv import DocConverter, S3Config
 from loguru import logger
 
 s3_config_path = '~/magic-doc.json'
@@ -45,7 +45,8 @@ def cli_conv(doc_path, progress_file_path, conv_timeout=None, s3_config_key=None
             if result is not None:
                 if s3_config_key:
                     try:
-                        s3_config = get_s3_config()[s3_config_key]
+                        ak, sk, endpoint = get_s3_config()['bucket_info'][s3_config_key]
+                        s3_config = S3Config(ak, sk, endpoint)
                     except KeyError:
                         logger.error(f"Error: argument '--s3cfg' is error.")
                         abort(f"Error: argument '--s3cfg' is error.")

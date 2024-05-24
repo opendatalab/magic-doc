@@ -62,7 +62,9 @@ def get_local_dir():
 
 
 def prepare_env(doc_file_name):
-    doc_type = doc_file_name.split(".", -1)
+    doc_type = os.path.splitext(doc_file_name)
+    if doc_type == "":
+        doc_type = "unknown"
     local_parent_dir = os.path.join(
         get_local_dir(), "magic-doc", doc_type, doc_file_name
     )

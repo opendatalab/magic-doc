@@ -108,7 +108,7 @@ def cli_conv(doc_path, progress_file_path, conv_timeout=None):
         doc_conv = DocConverter(s3_config)
         markdown_string = doc_conv.convert(doc_path, progress_file_path, conv_timeout)
         # click.echo(markdown_string)
-        with open(os.path.join(prepare_env(file_name), file_name), "w") as f:
+        with open(os.path.join(prepare_env(file_name), file_name+".md"), "w") as f:
             f.write(markdown_string)
     except Exception as e:
         logger.error(traceback.format_exc())

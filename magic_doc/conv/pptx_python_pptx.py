@@ -3,6 +3,7 @@ from pathlib import Path
 
 from loguru import logger
 
+from magic_doc.contrib.model import Page
 from magic_doc.contrib.office.pptx_extract import PptxExtractor
 from magic_doc.conv.base import BaseConv
 from magic_doc.progress.pupdator import ConvProgressUpdator
@@ -13,14 +14,14 @@ class Pptx(BaseConv):
         super().__init__(pupdator)
 
     def to_md(self, bits: bytes) -> str:
-        mid_json = self.pptx_to_contentlist(bits)
+        page_list = self.pptx_to_pagelist(bits)
         md_content_list = []
-        for page in mid_json:
+        total = len(page_list)
+        for index, page in enumerate(page_list):
+            progress = 50 + int(index / total * 50)
+            # logger.info(f"progress: {progress}")
             page_content_list = page['content_list']
-            total = len(page_content_list)
-            for index, content in enumerate(page_content_list):
-                progress = 50 + int(index / total * 50)
-                # logger.info(f"progress: {progress}")
+            for content in page_content_list:
                 self._progress_updator.update(progress)
                 if content['type'] == 'image':
                     pass
@@ -29,7 +30,7 @@ class Pptx(BaseConv):
                     md_content_list.append(data)
         return "\n".join(md_content_list)
 
-    def pptx_to_contentlist(self, bits):
+    def pptx_to_pagelist(self, bits) -> list[Page]:
         with tempfile.TemporaryDirectory() as temp_path:
             temp_dir = Path(temp_path)
             media_dir = temp_dir / "media"

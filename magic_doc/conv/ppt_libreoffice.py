@@ -16,14 +16,14 @@ class Ppt(BaseConv):
         super().__init__(pupdator)
 
     def to_md(self, bits: bytes) -> str:
-        mid_json = self.ppt_to_contentlist(bits)
+        page_list = self.ppt_to_pagelist(bits)
         md_content_list = []
-        for page in mid_json:
+        total = len(page_list)
+        for index, page in enumerate(page_list):
+            progress = 80 + int(index / total * 20)
+            # logger.info(f"progress: {progress}")
             page_content_list = page['content_list']
-            total = len(page_content_list)
-            for index, content in enumerate(page_content_list):
-                progress = 80 + int(index / total * 20)
-                # logger.info(f"progress: {progress}")
+            for content in page_content_list:
                 self._progress_updator.update(progress)
                 if content['type'] == 'image':
                     pass
@@ -45,7 +45,7 @@ class Ppt(BaseConv):
         else:
             return pptx_path
 
-    def ppt_to_contentlist(self, bits) -> list[Page]:
+    def ppt_to_pagelist(self, bits) -> list[Page]:
         with tempfile.TemporaryDirectory() as temp_path:
             temp_dir = Path(temp_path)
             media_dir = temp_dir / "media"
@@ -55,7 +55,7 @@ class Ppt(BaseConv):
             pptx_file_path = self.ppt_to_pptx(str(file_path), str(temp_path))
             self._progress_updator.update(50)
             pptx_extractor = PptxExtractor()
-            pages = pptx_extractor.extract(pptx_file_path, "tmp", temp_dir, media_dir, True)
+            pages = pptx_extractor.extract(Path(pptx_file_path), "tmp", temp_dir, media_dir, True)
             self._progress_updator.update(80)
             return pages
 

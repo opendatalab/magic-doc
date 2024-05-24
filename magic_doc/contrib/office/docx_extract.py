@@ -90,7 +90,7 @@ class DocxExtractor(OfficeExtractor):
                 page_no=0,
                 content_list=self.__word2markdown(id, open(r, "rb"), media_dir),
             )
-        self.clean_up(id)
+        # self.clean_up(id)
         return [page]
 
 

@@ -87,29 +87,44 @@ def parse_s3path(s3path: str):
 
 
 @click.command()
-@click.option('-f', '--file-path', 'doc_path', type=click.STRING, help='file path')
+@click.option('-f', '--file-path', 'input_file_path', type=click.STRING, help='file path, support s3/local/list')
 @click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING,
               help='path to the progress file to save')
 @click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
-def cli_conv(doc_path, progress_file_path, conv_timeout=None):
+def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
+    def parse_doc(doc_path, pf_path=None):
+        if not pf_path:
+            file_name = str(Path(doc_path).stem)
+            pf_path = f"/tmp/{file_name}.txt"
+        doc_conv = DocConverter(s3_config)
+        markdown_string = doc_conv.convert(doc_path, pf_path, conv_timeout)
+        # click.echo(markdown_string)
+        with open(os.path.join(prepare_env(file_name), file_name + ".md"), "w") as md_file:
+            md_file.write(markdown_string)
+
     try:
-        s3_config = None
-        if not doc_path:
+        if not input_file_path:
             logger.error(f"Error: Missing argument '--file-path'.")
             abort(f"Error: Missing argument '--file-path'.")
         else:
-            if doc_path.startswith("s3://"):
-                bucket, key = parse_s3path(doc_path)
+            if input_file_path.startswith("s3://"):
+                bucket, key = parse_s3path(input_file_path)
                 ak, sk, endpoint = get_s3_config(bucket)
                 s3_config = S3Config(ak, sk, endpoint)
-        if not progress_file_path:
-            file_name = str(Path(doc_path).stem)
-            progress_file_path = f"/tmp/{file_name}.txt"
-        doc_conv = DocConverter(s3_config)
-        markdown_string = doc_conv.convert(doc_path, progress_file_path, conv_timeout)
-        # click.echo(markdown_string)
-        with open(os.path.join(prepare_env(file_name), file_name+".md"), "w") as f:
-            f.write(markdown_string)
+            elif input_file_path.endswith(".list"):
+                with open(input_file_path, "r") as f:
+                    for line in f.readlines():
+                        line = line.strip()
+                        if line.startswith("s3://"):
+                            bucket, key = parse_s3path(line)
+                            ak, sk, endpoint = get_s3_config(bucket)
+                            s3_config = S3Config(ak, sk, endpoint)
+                            parse_doc(line, progress_file_path)
+                        else:
+                            parse_doc(line, progress_file_path)
+
+            parse_doc(input_file_path, progress_file_path)
+
     except Exception as e:
         logger.error(traceback.format_exc())
         abort(f'Error: {traceback.format_exc()}')

@@ -18,6 +18,8 @@
 
 # debug directory
 debug/
+source.dev.env
 
 # pycharm
 .idea/
+

@@ -43,3 +43,4 @@ boto3==1.17.108
 smart_open[s3]
 werkzeug
 python-pptx
+magic_pdf @ https://github.com/magicpdf/Magic-PDF/releases/download/magic_pdf-0.4.2-released/magic_pdf-0.4.2-py3-none-any.whl

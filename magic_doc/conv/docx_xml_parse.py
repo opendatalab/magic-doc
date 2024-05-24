@@ -17,8 +17,8 @@ class Docx(BaseConv):
     def __init__(self):
         super().__init__()
 
-    def to_md(self, bits: bytes, pupdator:ConvProgressUpdator) -> str:
-        page_list = self.docx_to_pagelist(bits)
+    def to_md(self, bits: bytes, pupdator: ConvProgressUpdator) -> str:
+        page_list = self.docx_to_pagelist(bits, pupdator)
         md_content_list = []
         for page in page_list:
             page_content_list = page['content_list']
@@ -48,5 +48,5 @@ class Docx(BaseConv):
 
 if __name__ == '__main__':
     pupdator = FileBaseProgressUpdator("/tmp/p.txt")
-    logger.info(
-        Docx().to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read(), pupdator))
+    docx = Docx()
+    logger.info(docx.to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read(), pupdator))

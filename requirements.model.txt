@@ -1,0 +1,13 @@
+pdfplumber
+modelscope
+ipdb
+shapely
+pyclipper
+matplotlib
+boto3
+tenacity
+fitz
+PyMuPDF
+ultralytics
+paddlepaddle-gpu
+paddleocr==2.7.3

@@ -1,12 +1,17 @@
 import json
 from magic_doc.conv.base import BaseConv
 from magic_html import GeneralExtractor
+from magic_doc.progress.pupdator import ConvProgressUpdator
 from loguru import logger
 
 extractor = GeneralExtractor()
 
 
 class Html(BaseConv):
+
+    def __init__(self, pupdator: ConvProgressUpdator):
+        super().__init__(pupdator)
+
     @logger.catch
     def to_md(self, html: str, **kwargs) -> str:
         """
@@ -30,3 +35,10 @@ class Html(BaseConv):
         html_type = kwargs.get("html_type", None)
         data = extractor.extract(html, base_url=base_url, html_type=html_type)
         return json.dumps(data, ensure_ascii=False)
+
+
+if __name__ == '__main__':
+    html_str = "<!doctype html><html><head><title>Example Domain</title><meta charset='utf-8' /><meta http-equiv='Content-type' content='text/html; charset=utf-8' /><meta name='viewport' content='width=device-width, initial-scale=1' /></head><body><div><h1>Example Domain</h1><p>This domain is for use in illustrative examples in documents. You may use this domain in literature without prior coordination or asking for permission.</p><p>This domain is for use in illustrative examples in documents. You may use this domain in literature without prior coordination or asking for permission.</p><p>This domain is for use in illustrative examples in documents. You may use this domain in literature without prior coordination or asking for permission.</p><p><a href='https://www.iana.org/domains/example'>More information...</a></p></div></body></html>"
+    pupdator = ConvProgressUpdator()
+    result = Html(pupdator).to_md(html=html_str)
+    print(result)

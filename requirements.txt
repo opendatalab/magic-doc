@@ -37,8 +37,9 @@ requests==2.31.0
 six==1.16.0
 SQLAlchemy==2.0.30
 typing_extensions==4.11.0
-urllib3==2.2.1
+urllib3
 Werkzeug==3.0.3
 boto3==1.17.108
 smart_open[s3]
 werkzeug
+python-pptx

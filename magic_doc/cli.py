@@ -61,8 +61,7 @@ def get_local_dir():
     return config.get("temp-output-dir", "/tmp")
 
 
-def prepare_env(doc_file_name):
-    doc_type = os.path.splitext(doc_file_name)
+def prepare_env(doc_file_name, doc_type=""):
     if doc_type == "":
         doc_type = "unknown"
     local_parent_dir = os.path.join(
@@ -103,7 +102,9 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             doc_conv = DocConverter(s3_config)
             markdown_string = doc_conv.convert(doc_path, pf_path, conv_timeout)
             # click.echo(markdown_string)
-            with open(os.path.join(prepare_env(file_name), file_name + ".md"), "w") as md_file:
+            base_name, doc_type = os.path.splitext(doc_path)
+            out_put_dir = prepare_env(file_name, doc_type.lstrip("."))
+            with open(os.path.join(out_put_dir, file_name + ".md"), "w") as md_file:
                 md_file.write(markdown_string)
         except Exception as e:
             logger.error(traceback.format_exc())

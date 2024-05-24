@@ -33,7 +33,7 @@ class Ppt(BaseConv):
         return "\n".join(md_content_list)
 
     def ppt_to_pptx(self, ppt_path: str, dir_path: str) -> str:
-        cmd = f'libreoffice --headless --convert-to pptx "{ppt_path}" --outdir "{dir_path}"'
+        cmd = f'soffice --headless --convert-to pptx "{ppt_path}" --outdir "{dir_path}"'
         logger.info(cmd)
         process = Popen(cmd, shell=True)
         process.wait()

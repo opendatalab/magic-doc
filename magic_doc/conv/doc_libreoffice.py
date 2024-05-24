@@ -6,7 +6,6 @@ from subprocess import Popen
 from loguru import logger
 
 from magic_doc.contrib.model import Page
-from magic_doc.contrib.office.doc import DocExtractor
 from magic_doc.contrib.office.docx_extract import DocxExtractor
 from magic_doc.conv.base import BaseConv
 from magic_doc.progress.pupdator import ConvProgressUpdator
@@ -29,13 +28,13 @@ class Doc(BaseConv):
                 self._progress_updator.update(progress)
                 if content['type'] == 'image':
                     pass
-                elif content['type'] == "text":
+                elif content['type'] in ["text", "md"]:
                     data = content['data']
                     md_content_list.append(data)
         return "\n".join(md_content_list)
 
     def doc_to_docx(self, doc_path: str, dir_path: str) -> str:
-        cmd = f'libreoffice --headless --convert-to docx "{doc_path}" --outdir "{dir_path}"'
+        cmd = f'soffice --headless --convert-to docx "{doc_path}" --outdir "{dir_path}"'
         logger.info(cmd)
         process = Popen(cmd, shell=True)
         process.wait()
@@ -65,4 +64,4 @@ class Doc(BaseConv):
 if __name__ == '__main__':
     pupdator = ConvProgressUpdator()
     doc = Doc(pupdator)
-    logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes()))
+    logger.info(doc.to_md(Path(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图1.doc").read_bytes()))

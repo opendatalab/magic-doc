@@ -1,5 +1,9 @@
 import os
 
+import platform
+
+from func_timeout import func_timeout, FunctionTimedOut
+from loguru import logger
 import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
@@ -7,13 +11,15 @@ from loguru import logger
 from smart_open import open
 
 from magic_doc.conv.base import BaseConv
-from magic_doc.conv.doc_antiword import Doc
+from magic_doc.conv.doc_antiword import Doc as Doc_antiword
+from magic_doc.conv.doc_libreoffice import Doc as Doc_soffice
 from magic_doc.conv.docx_xml_parse import Docx
 from magic_doc.conv.pdf import Pdf
+from magic_doc.conv.ppt_libreoffice import Ppt
+from magic_doc.conv.pptx_python_pptx import Pptx
+from smart_open import open
 
-# MODEL_LAYOUT_PATH_VAR = "MAGIC_DOC_LAYOUT_MODEL_PATH" # 模型路径环境变量
-# MODEL_EQUATION_RECOG_PATH_VAR = "MAGIC_DOC_EQUATION_RECOG_MODEL_PATH" # 公式识别模型路径环境变量
-# MODEL_EQUATION_DETECT_PATH_VAR = "MAGIC_DOC_EQUATION_DETECT_MODEL_PATH" # 公式检测模型路径环境变量
+from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 
 
 class ConvException(Exception):
@@ -32,6 +38,7 @@ class S3Config(object):
 
 class DocConverter(object):
     def __init__(self, s3_config: S3Config, temp_dir: str = "/tmp/", conv_timeout=60):
+
         """
         初始化一次，多次调用convert方法。避免模型加载和构造s3client的性能开销。
         """
@@ -45,16 +52,10 @@ class DocConverter(object):
                 config=Config(
                     s3={"addressing_style": "path"}, retries={"max_attempts": 8}
                 ),
-            )
+
         self.__temp_dir = temp_dir
         self.__conv_timeout = conv_timeout  # 转换超时时间，单位秒
 
-        """
-        从环境变量加载模型路径
-        """
-        # self.__model_equation_recog_path = os.getenv(MODEL_EQUATION_RECOG_PATH_VAR)
-        # self.__model_equation_detect_path = os.getenv(MODEL_EQUATION_DETECT_PATH_VAR)
-        # self.__model_layout_path = os.getenv(MODEL_LAYOUT_PATH_VAR)
         # if not self.__model_equation_recog_path or not self.__model_equation_detect_path or not self.__model_layout_path:
         #     raise ConvException("Model path not found in environment variables: %s, %s, %s" % (MODEL_EQUATION_RECOG_PATH_VAR, MODEL_EQUATION_DETECT_PATH_VAR, MODEL_LAYOUT_PATH_VAR))
         # else:
@@ -65,19 +66,31 @@ class DocConverter(object):
         self.__init_conv()
 
     def __init_conv(self):
-        self.docconv = Doc()
+        # 根据系统选择doc解析方式
+        system = platform.system()
+        if system == 'Linux':
+            self.doc_conv = Doc_antiword()
+        else:
+            self.doc_conv = Doc_soffice()
         self.docx_conv = Docx()
         self.pdf_conv = Pdf()
+        self.ppt_conv = Ppt()
+        self.pptx_conv = Pptx()
+
 
     def __select_conv(self, doc_path: str):
         """根据文件后缀选择转换器"""
         lower_case_path = doc_path.lower()
         if lower_case_path.endswith(".doc"):
-            return self.docconv
+            return self.doc_conv
         elif lower_case_path.endswith(".docx"):
             return self.docx_conv
         elif lower_case_path.endswith(".pdf"):
             return self.pdf_conv
+        elif lower_case_path.endswith(".ppt"):
+            return self.ppt_conv
+        elif lower_case_path.endswith(".pptx"):
+            return self.pptx_conv
         else:
             raise ConvException("Unsupported file format.")
 
@@ -105,11 +118,13 @@ class DocConverter(object):
         conv_timeout = conv_timeout or self.__conv_timeout  # 根据这个时间判断函数超时
         markdown_string = ""
         try:
+            prog_updator = FileBaseProgressUpdator(progress_file_path)
             conv: BaseConv = self.__select_conv(doc_path)
             byte_content = self.__read_file_as_bytes(doc_path)
             markdown_string = func_timeout(
                 self.__conv_timeout, conv.to_md, args=(byte_content,)
             )
+
         except FunctionTimedOut as e1:
             logger.exception(e1)
             raise ConvException("Convert timeout.")

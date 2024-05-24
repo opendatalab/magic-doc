@@ -73,11 +73,12 @@ class DocConverter(object):
         
     def __select_conv(self, doc_path:str):
         """根据文件后缀选择转换器"""
-        if doc_path.endswith(".doc"):
+        lower_case_path = doc_path.lower()
+        if lower_case_path.endswith(".doc"):
             return self.docconv
-        elif doc_path.endswith(".docx"):
+        elif lower_case_path.endswith(".docx"):
             return self.docx_conv
-        elif doc_path.endswith(".pdf"):
+        elif lower_case_path.endswith(".pdf"):
             return self.pdf_conv
         else:
             raise ConvException("Unsupported file format.")

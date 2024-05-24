@@ -97,9 +97,6 @@ total_cost_time = 0
               help='path to the progress file to save')
 @click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
 def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
-    global total_cost_time
-    global total_error_files
-
     def parse_doc(doc_path, pf_path=None):
         global total_cost_time
         global total_error_files

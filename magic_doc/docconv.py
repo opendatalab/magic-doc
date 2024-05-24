@@ -45,14 +45,14 @@ class DocConverter(object):
         self.__s3cfg = s3_config
         if self.__s3cfg:
             self.__s3cli = boto3.client(
-                "s3",
+                service_name="s3",
                 aws_access_key_id=self.__s3cfg.ak,
                 aws_secret_access_key=self.__s3cfg.sk,
                 endpoint_url=self.__s3cfg.endpoint,
                 config=Config(
                     s3={"addressing_style": "path"}, retries={"max_attempts": 8}
-                ),
-
+                )
+            )
         self.__temp_dir = temp_dir
         self.__conv_timeout = conv_timeout  # 转换超时时间，单位秒
 

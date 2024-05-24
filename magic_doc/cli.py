@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import traceback
 from datetime import datetime
@@ -22,11 +23,54 @@ def abort(message=None, exit_code=1):
     exit(exit_code)
 
 
+def read_config():
+    home_dir = os.path.expanduser("~")
+
+    config_file = os.path.join(home_dir, "magic-doc.json")
+
+    if not os.path.exists(config_file):
+        raise Exception(f"{config_file} not found")
+
+    with open(config_file, "r") as f:
+        config = json.load(f)
+    return config
+
+
 def get_s3_config(bucket_name: str):
-    with open(Path(s3_config_path).expanduser(), 'r') as f:
-        s3_config_json = json.load(f)
-        bucket_info = s3_config_json.get("bucket_info")
-        return bucket_info.get(bucket_name)
+    """
+    ~/magic-pdf.json 读出来
+    """
+    config = read_config()
+
+    bucket_info = config.get("bucket_info")
+    if bucket_name not in bucket_info:
+        access_key, secret_key, storage_endpoint = bucket_info["[default]"]
+    else:
+        access_key, secret_key, storage_endpoint = bucket_info[bucket_name]
+
+    if access_key is None or secret_key is None or storage_endpoint is None:
+        raise Exception("ak, sk or endpoint not found in magic-doc.json")
+
+    # logger.info(f"get_s3_config: ak={access_key}, sk={secret_key}, endpoint={storage_endpoint}")
+
+    return access_key, secret_key, storage_endpoint
+
+
+def get_local_dir():
+    config = read_config()
+    return config.get("temp-output-dir", "/tmp")
+
+
+def prepare_env(doc_file_name):
+    local_parent_dir = os.path.join(
+        get_local_dir(), "magic-doc", doc_file_name
+    )
+
+    # local_image_dir = os.path.join(local_parent_dir, "images")
+    local_md_dir = local_parent_dir
+    # os.makedirs(local_image_dir, exist_ok=True)
+    os.makedirs(local_md_dir, exist_ok=True)
+    return local_md_dir
 
 
 def remove_non_official_s3_args(s3path):
@@ -63,7 +107,9 @@ def cli_conv(doc_path, progress_file_path, conv_timeout=None):
             progress_file_path = f"/tmp/{file_name}.txt"
         doc_conv = DocConverter(s3_config)
         markdown_string = doc_conv.convert(doc_path, progress_file_path, conv_timeout)
-        click.echo(markdown_string)
+        # click.echo(markdown_string)
+        with open(os.path.join(prepare_env(file_name), file_name), "w") as f:
+            f.write(markdown_string)
     except Exception as e:
         logger.error(traceback.format_exc())
         abort(f'Error: {traceback.format_exc()}')

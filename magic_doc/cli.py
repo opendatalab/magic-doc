@@ -93,41 +93,41 @@ def parse_s3path(s3path: str):
 @click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
 def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
     def parse_doc(doc_path, pf_path=None):
-        if not pf_path:
-            file_name = str(Path(doc_path).stem)
-            pf_path = f"/tmp/{file_name}.txt"
-        doc_conv = DocConverter(s3_config)
-        markdown_string = doc_conv.convert(doc_path, pf_path, conv_timeout)
-        # click.echo(markdown_string)
-        with open(os.path.join(prepare_env(file_name), file_name + ".md"), "w") as md_file:
-            md_file.write(markdown_string)
+        try:
+            if not pf_path:
+                file_name = str(Path(doc_path).stem)
+                pf_path = f"/tmp/{file_name}.txt"
+            doc_conv = DocConverter(s3_config)
+            markdown_string = doc_conv.convert(doc_path, pf_path, conv_timeout)
+            # click.echo(markdown_string)
+            with open(os.path.join(prepare_env(file_name), file_name + ".md"), "w") as md_file:
+                md_file.write(markdown_string)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            # abort(f'Error: {traceback.format_exc()}')
 
-    try:
-        if not input_file_path:
-            logger.error(f"Error: Missing argument '--file-path'.")
-            abort(f"Error: Missing argument '--file-path'.")
-        else:
-            if input_file_path.startswith("s3://"):
-                bucket, key = parse_s3path(input_file_path)
-                ak, sk, endpoint = get_s3_config(bucket)
-                s3_config = S3Config(ak, sk, endpoint)
-            elif input_file_path.endswith(".list"):
-                with open(input_file_path, "r") as f:
-                    for line in f.readlines():
-                        line = line.strip()
-                        if line.startswith("s3://"):
-                            bucket, key = parse_s3path(line)
-                            ak, sk, endpoint = get_s3_config(bucket)
-                            s3_config = S3Config(ak, sk, endpoint)
-                            parse_doc(line, progress_file_path)
-                        else:
-                            parse_doc(line, progress_file_path)
-
+    if not input_file_path:
+        logger.error(f"Error: Missing argument '--file-path'.")
+        abort(f"Error: Missing argument '--file-path'.")
+    else:
+        if input_file_path.startswith("s3://"):
+            bucket, key = parse_s3path(input_file_path)
+            ak, sk, endpoint = get_s3_config(bucket)
+            s3_config = S3Config(ak, sk, endpoint)
             parse_doc(input_file_path, progress_file_path)
-
-    except Exception as e:
-        logger.error(traceback.format_exc())
-        abort(f'Error: {traceback.format_exc()}')
+        elif input_file_path.endswith(".list"):
+            with open(input_file_path, "r") as f:
+                for line in f.readlines():
+                    line = line.strip()
+                    if line.startswith("s3://"):
+                        bucket, key = parse_s3path(line)
+                        ak, sk, endpoint = get_s3_config(bucket)
+                        s3_config = S3Config(ak, sk, endpoint)
+                        parse_doc(line, progress_file_path)
+                    else:
+                        parse_doc(line, progress_file_path)
+        else:
+            parse_doc(input_file_path, progress_file_path)
 
 
 if __name__ == '__main__':

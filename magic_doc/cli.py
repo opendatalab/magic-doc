@@ -1,4 +1,5 @@
 import json
+import re
 import traceback
 from datetime import datetime
 import click
@@ -14,35 +15,43 @@ log_name = f'log_{datetime.now().strftime("%Y-%m-%d")}.log'
 log_file_path = "magic_doc/logs/" + log_name
 logger.add(str(log_file_path), rotation='00:00', encoding='utf-8', level=log_level, enqueue=True)
 
+s3_regex = re.compile(r"^s3a?://(([^/]+)/([\w\W]+)\.(.*))$")
+
 
 def abort(message=None, exit_code=1):
     click.echo(click.style(message, fg='red'))
     exit(exit_code)
 
 
-def get_s3_config(s3_config_key):
+def get_s3_config():
     with open(Path(s3_config_path).expanduser(), 'r') as f:
-        return json.load(f)[s3_config_key]
+        return json.load(f)
 
 
 @click.command()
 @click.option('-s', '--s3cfg', 's3_config_key', type=click.STRING, help='s3 config')
 @click.option('-f', '--file-path', 'doc_path', type=click.STRING, help='file path')
-@click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING, help='path to the progress file to save')
+@click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING,
+              help='path to the progress file to save')
 @click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
 def cli_conv(doc_path, progress_file_path, conv_timeout=None, s3_config_key=None):
     try:
-        if s3_config_key:
-            try:
-                s3_config = get_s3_config(s3_config_key)[s3_config_path]
-            except KeyError:
-                logger.error(f"Error: argument '--s3cfg' is error.")
-                abort(f"Error: argument '--s3cfg' is error.")
-        else:
-            s3_config = None
+        s3_config = None
         if not doc_path:
             logger.error(f"Error: Missing argument '--file-path'.")
             abort(f"Error: Missing argument '--file-path'.")
+        else:
+            result = s3_regex.match(doc_path)
+            if result is not None:
+                if s3_config_key:
+                    try:
+                        s3_config = get_s3_config()[s3_config_key]
+                    except KeyError:
+                        logger.error(f"Error: argument '--s3cfg' is error.")
+                        abort(f"Error: argument '--s3cfg' is error.")
+                else:
+                    logger.error(f"Error: Missing argument '--s3cfg' is error.")
+                    abort(f"Error: Missing argument '--s3cfg' is error.")
         if not progress_file_path:
             progress_file_path = f"/tmp/{doc_path}.txt"
         docconv = DocConverter(s3_config)

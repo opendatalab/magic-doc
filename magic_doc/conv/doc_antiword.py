@@ -13,7 +13,7 @@ from magic_doc.progress.pupdator import ConvProgressUpdator
 
 class Doc(BaseConv):
 
-    def __init__(self,):
+    def __init__(self):
         super().__init__()
 
     def to_md(self, bits: bytes, pupdator:ConvProgressUpdator) -> str:

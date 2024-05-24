@@ -122,7 +122,7 @@ class DocConverter(object):
             conv: BaseConv = self.__select_conv(doc_path)
             byte_content = self.__read_file_as_bytes(doc_path)
             markdown_string = func_timeout(
-                self.__conv_timeout, conv.to_md, args=(byte_content,)
+                self.__conv_timeout, conv.to_md, args=(byte_content, prog_updator)
             )
 
         except FunctionTimedOut as e1:

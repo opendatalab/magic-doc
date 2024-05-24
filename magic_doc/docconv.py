@@ -4,8 +4,8 @@ from loguru import logger
 import boto3
 from botocore.client import Config
 from magic_doc.conv.base import BaseConv
-from magic_doc.conv.doc import Doc
-from magic_doc.conv.docx import Docx
+from magic_doc.conv.doc_antiword import Doc
+from magic_doc.conv.docx_xml_parse import Docx
 from magic_doc.conv.pdf import Pdf
 from smart_open import open
 

@@ -1,11 +1,13 @@
 import os
 import tempfile
 from pathlib import Path
+from subprocess import Popen
 
 from loguru import logger
 
 from magic_doc.contrib.model import Page
 from magic_doc.contrib.office.doc import DocExtractor
+from magic_doc.contrib.office.docx_extract import DocxExtractor
 from magic_doc.conv.base import BaseConv
 from magic_doc.progress.pupdator import ConvProgressUpdator
 
@@ -32,6 +34,19 @@ class Doc(BaseConv):
                     md_content_list.append(data)
         return "\n".join(md_content_list)
 
+    def doc_to_docx(self, doc_path: str, dir_path: str) -> str:
+        cmd = f'libreoffice --headless --convert-to docx "{doc_path}" --outdir "{dir_path}"'
+        logger.info(cmd)
+        process = Popen(cmd, shell=True)
+        process.wait()
+        fname = str(Path(doc_path).stem)
+        docx_path = os.path.join(os.path.dirname(doc_path), f'{fname}.docx')
+        if not os.path.exists(docx_path):
+            # logger.error(f"> !!! File conversion failed {doc_path} ==> {docx_path}")
+            raise Exception(f"> !!! File conversion failed {doc_path} ==> {docx_path}")
+        else:
+            return docx_path
+
     def doc_to_pagelist(self, bits) -> list[Page]:
         with tempfile.TemporaryDirectory() as temp_path:
             temp_dir = Path(temp_path)
@@ -39,13 +54,12 @@ class Doc(BaseConv):
             media_dir.mkdir()
             file_path = temp_dir / "tmp.doc"
             file_path.write_bytes(bits)
-            doc_extractor = DocExtractor()
-            cwd_path = os.path.dirname(os.path.abspath(__file__)) / Path("../bin/linux")
-            bin_path = cwd_path / "antiword"
-            os.chmod(bin_path, 0o755)
-            page_list = doc_extractor.extract(file_path, "tmp", temp_dir, media_dir, True, cwd_path=cwd_path)
+            docx_file_path = self.doc_to_docx(str(file_path), str(temp_path))
             self._progress_updator.update(50)
-        return page_list
+            docx_extractor = DocxExtractor()
+            pages = docx_extractor.extract(Path(docx_file_path), "tmp", temp_dir, media_dir, True)
+            self._progress_updator.update(80)
+            return pages
 
 
 if __name__ == '__main__':

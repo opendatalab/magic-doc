@@ -1,9 +1,8 @@
-import os
 
 import platform
+import time
 
-from func_timeout import func_timeout, FunctionTimedOut
-from loguru import logger
+
 import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
@@ -117,13 +116,17 @@ class DocConverter(object):
         """
         conv_timeout = conv_timeout or self.__conv_timeout  # 根据这个时间判断函数超时
         markdown_string = ""
+        cost_time = 0
         try:
             prog_updator = FileBaseProgressUpdator(progress_file_path)
             conv: BaseConv = self.__select_conv(doc_path)
             byte_content = self.__read_file_as_bytes(doc_path)
+            start_time = time.time()
             markdown_string = func_timeout(
                 self.__conv_timeout, conv.to_md, args=(byte_content, prog_updator)
             )
+            end_time = time.time()
+            cost_time = round(end_time - start_time, 2)
 
         except FunctionTimedOut as e1:
             logger.exception(e1)
@@ -132,4 +135,4 @@ class DocConverter(object):
             logger.exception(e2)
             raise ConvException("Convert failed: %s" % str(e2))
 
-        return markdown_string
+        return markdown_string, cost_time

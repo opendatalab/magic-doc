@@ -69,7 +69,8 @@ class DocxExtractor(OfficeExtractor):
                         # docx section pointer, meaningless
                         pass
                     case unknown:
-                        print(unknown)
+                        pass
+                        # print(unknown)
             return content_list
 
     def extract(

@@ -1,6 +1,5 @@
 import json
 import os
-import re
 import traceback
 from datetime import datetime
 import click
@@ -93,19 +92,23 @@ def parse_s3path(s3path: str):
 @click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING,
               help='path to the progress file to save')
 @click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
+
 def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
+    total_cost_time = 0
     def parse_doc(doc_path, pf_path=None):
         try:
             if not pf_path:
                 file_name = str(Path(doc_path).stem)
                 pf_path = f"/tmp/{file_name}.txt"
             doc_conv = DocConverter(s3_config)
-            markdown_string = doc_conv.convert(doc_path, pf_path, conv_timeout)
+            markdown_string, cost_time = doc_conv.convert(doc_path, pf_path, conv_timeout)
+            logger.info(f"convert {doc_path} to markdown, cost {cost_time} seconds")
             # click.echo(markdown_string)
             base_name, doc_type = os.path.splitext(doc_path)
             out_put_dir = prepare_env(file_name, doc_type.lstrip("."))
             with open(os.path.join(out_put_dir, file_name + ".md"), "w") as md_file:
                 md_file.write(markdown_string)
+            return cost_time
         except Exception as e:
             logger.error(traceback.format_exc())
             # abort(f'Error: {traceback.format_exc()}')
@@ -118,7 +121,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             bucket, key = parse_s3path(input_file_path)
             ak, sk, endpoint = get_s3_config(bucket)
             s3_config = S3Config(ak, sk, endpoint)
-            parse_doc(input_file_path, progress_file_path)
+            cost_time = parse_doc(input_file_path, progress_file_path)
         elif input_file_path.endswith(".list"):
             with open(input_file_path, "r") as f:
                 for line in f.readlines():
@@ -127,11 +130,14 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
                         bucket, key = parse_s3path(line)
                         ak, sk, endpoint = get_s3_config(bucket)
                         s3_config = S3Config(ak, sk, endpoint)
-                        parse_doc(line, progress_file_path)
+                        cost_time = parse_doc(line, progress_file_path)
                     else:
-                        parse_doc(line, progress_file_path)
+                        cost_time = parse_doc(line, progress_file_path)
         else:
-            parse_doc(input_file_path, progress_file_path)
+            cost_time = parse_doc(input_file_path, progress_file_path)
+
+    total_cost_time += cost_time
+    logger.info(f"total cost time: {total_cost_time}")
 
 
 if __name__ == '__main__':

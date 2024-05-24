@@ -11,7 +11,7 @@ from magic_doc.progress.pupdator import ConvProgressUpdator
 
 
 class Pptx(BaseConv):
-    def __init__(self, ):
+    def __init__(self):
         super().__init__()
 
     def to_md(self, bits: bytes, pupdator: ConvProgressUpdator) -> str:
@@ -45,6 +45,7 @@ class Pptx(BaseConv):
 
 
 if __name__ == '__main__':
-    pupdator = FileBaseProgressUpdator("debug/progress.txt")
+    pupdator = FileBaseProgressUpdator("/tmp/p.txt")
+    pptx = Pptx()
     logger.info(
-        Pptx(pupdator).to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\【英文-模板】Professional Pack Standard.pptx", "rb").read(), pupdator))
+        pptx.to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\【英文-模板】Professional Pack Standard.pptx", "rb").read(), pupdator))

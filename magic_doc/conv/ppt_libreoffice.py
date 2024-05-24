@@ -62,7 +62,8 @@ class Ppt(BaseConv):
 
 
 if __name__ == '__main__':
-    pupdator = FileBaseProgressUpdator("debug/progress.txt")
+    pupdator = FileBaseProgressUpdator("/tmp/p.txt")
+    ppt = Ppt()
     logger.info(
-        Ppt().to_md(
-            open(r"D:\project\20240514magic_doc\doc_ppt\doc\【英文-模板】Professional Pack Standard.ppt", "rb").read(), pupdator))
+        ppt.to_md(
+            open(r"D:\project\20240514magic_doc\doc_ppt\doc\【英文-课件】MIT15_082JF10_lec10.3MB.ppt", "rb").read(), pupdator))

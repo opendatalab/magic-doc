@@ -54,7 +54,7 @@ def cli_conv(doc_path, progress_file_path, conv_timeout=None, s3_config_key=None
                     logger.error(f"Error: Missing argument '--s3cfg' is error.")
                     abort(f"Error: Missing argument '--s3cfg' is error.")
         if not progress_file_path:
-            progress_file_path = f"/tmp/{doc_path}.txt"
+            progress_file_path = f"/tmp/{doc_path.split('/')[-1]}.txt"
         docconv = DocConverter(s3_config)
         markdown_string = docconv.convert(doc_path, progress_file_path, conv_timeout)
         click.echo(markdown_string)

@@ -8,7 +8,7 @@ import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
 from loguru import logger
-from smart_open import open
+
 
 from magic_doc.conv.base import BaseConv
 from magic_doc.conv.doc_antiword import Doc as Doc_antiword

@@ -28,7 +28,7 @@ class SingletonModelWrapper:
                 configs=os.path.join(
                     get_repo_directory(), "resources/model/model_configs.yaml"
                 ),
-                # apply_ocr=True, apply_layout=True, apply_formula=True,
+                apply_ocr=True, apply_layout=True, apply_formula=False,
             )
         return cls.instance
     

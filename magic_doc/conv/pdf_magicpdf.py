@@ -10,6 +10,7 @@ from magic_doc.conv.base import BaseConv
 from magic_doc.model.doc_analysis import DocAnalysis, load_images_from_pdf
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.utils.null_writer import NullWriter
+from magic_doc.progress.pupdator import ConvProgressUpdator
 
 remove_img_pattern = re.compile(r"!\[.*?\]\(.*?\)")
 
@@ -34,12 +35,12 @@ class SingletonModelWrapper:
 
 
 class Pdf(BaseConv):
-    def to_md(self, bits: bytes | str) -> str:
+    def to_md(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> str:
         model_proc = SingletonModelWrapper()
-        self._progress_updator.update(0)
+        pupdator.update(0)
 
         model_list = model_proc(bits)  # type: ignore
-        self._progress_updator.update(50)
+        pupdator.update(50)
         jso_useful_key = {
             "_pdf_type": "",
             "model_list": model_list,
@@ -48,10 +49,10 @@ class Pdf(BaseConv):
         pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
-        self._progress_updator.update(90)
+        pupdator.update(90)
 
         md_content = pipe.pipe_mk_markdown(NULL_IMG_DIR, drop_mode=DropMode.NONE)
-        self._progress_updator.update(100)
+        pupdator.update(100)
 
         no_img_md_content = re.sub(remove_img_pattern, "", md_content)  # type: ignore
         no_img_md_content = re.sub(r"^\s\s\n", "", no_img_md_content,flags=re.MULTILINE)
@@ -61,8 +62,8 @@ class Pdf(BaseConv):
 if __name__ == "__main__":
     with open("/opt/data/pdf/20240423/pdf_test2/ol006018w.pdf", "rb") as f:
         bits_data = f.read()
-        parser = Pdf(FileBaseProgressUpdator("debug/progress.txt"))
-        md_content = parser.to_md(bits_data)
+        parser = Pdf()
+        md_content = parser.to_md(bits_data, FileBaseProgressUpdator("debug/progress.txt"))
 
         with open("debug/pdf2md.by_model.md", "w") as f:
             f.write(md_content)

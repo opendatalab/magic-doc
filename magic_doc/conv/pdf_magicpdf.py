@@ -1,5 +1,5 @@
 import re
-from io import BytesIO
+import os
 
 from magic_pdf.libs.MakeContentConfig import DropMode
 from magic_pdf.pipe.UNIPipe import UNIPipe
@@ -11,6 +11,7 @@ from magic_doc.model.doc_analysis import DocAnalysis, load_images_from_pdf
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.utils.null_writer import NullWriter
 from magic_doc.progress.pupdator import ConvProgressUpdator
+from magic_doc.utils import get_repo_directory
 
 remove_img_pattern = re.compile(r"!\[.*?\]\(.*?\)")
 
@@ -27,7 +28,7 @@ class SingletonModelWrapper:
         return cls.instance
 
     def __init__(self):
-        self.doc_analysis = DocAnalysis()
+        self.doc_analysis = DocAnalysis(configs=os.path.join(get_repo_directory(), "resources/model/model_configs.yaml"))
 
     def __call__(self, bytes: bytes):
         images = load_images_from_pdf(bytes)

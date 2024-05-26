@@ -1,5 +1,5 @@
-import re
 import os
+import re
 
 from magic_pdf.libs.MakeContentConfig import DropMode
 from magic_pdf.pipe.UNIPipe import UNIPipe
@@ -9,9 +9,9 @@ from magic_doc.contrib.pdf.pdf_extractor import PDFExtractor
 from magic_doc.conv.base import BaseConv
 from magic_doc.model.doc_analysis import DocAnalysis, load_images_from_pdf
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
-from magic_doc.utils.null_writer import NullWriter
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from magic_doc.utils import get_repo_directory
+from magic_doc.utils.null_writer import NullWriter
 
 remove_img_pattern = re.compile(r"!\[.*?\]\(.*?\)")
 
@@ -20,16 +20,18 @@ NULL_IMG_DIR = "/tmp"
 
 
 class SingletonModelWrapper:
-    _instance = None
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(SingletonModelWrapper, cls).__new__(cls)
+            cls.instance.doc_analysis = DocAnalysis(
+                configs=os.path.join(
+                    get_repo_directory(), "resources/model/model_configs.yaml"
+                ),
+                # apply_ocr=True, apply_layout=True, apply_formula=True,
+            )
         return cls.instance
-
-    def __init__(self):
-        self.doc_analysis = DocAnalysis(configs=os.path.join(get_repo_directory(), "resources/model/model_configs.yaml"))
-
+    
     def __call__(self, bytes: bytes):
         images = load_images_from_pdf(bytes)
         return self.doc_analysis(images)
@@ -56,7 +58,9 @@ class Pdf(BaseConv):
         pupdator.update(100)
 
         no_img_md_content = re.sub(remove_img_pattern, "", md_content)  # type: ignore
-        no_img_md_content = re.sub(r"^\s\s\n", "", no_img_md_content,flags=re.MULTILINE)
+        no_img_md_content = re.sub(
+            r"^\s\s\n", "", no_img_md_content, flags=re.MULTILINE
+        )
         return no_img_md_content
 
 
@@ -64,7 +68,9 @@ if __name__ == "__main__":
     with open("/opt/data/pdf/20240423/pdf_test2/ol006018w.pdf", "rb") as f:
         bits_data = f.read()
         parser = Pdf()
-        md_content = parser.to_md(bits_data, FileBaseProgressUpdator("debug/progress.txt"))
+        md_content = parser.to_md(
+            bits_data, FileBaseProgressUpdator("debug/progress.txt")
+        )
 
         with open("debug/pdf2md.by_model.md", "w") as f:
             f.write(md_content)

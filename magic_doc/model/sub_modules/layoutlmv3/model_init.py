@@ -8,6 +8,7 @@ from detectron2.config import CfgNode as CN
 from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.data.datasets import register_coco_instances
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch, DefaultPredictor
+from magic_doc.utils import get_repo_directory
 
 def add_vit_config(cfg):
     """
@@ -101,9 +102,8 @@ class DotDict(dict):
         
 class Layoutlmv3_Predictor(object):
     def __init__(self, weights):
-        current_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split("/")[:-3])
         layout_args = {
-            "config_file": os.path.join(current_path, "resources/model/layoutlmv3/layoutlmv3_base_inference.yaml"), # TODO 修改配置路径
+            "config_file": os.path.join(get_repo_directory(), "resources/model/layoutlmv3/layoutlmv3_base_inference.yaml"), # TODO 修改配置路径
             "resume": False,
             "eval_only": False,
             "num_gpus": 1,

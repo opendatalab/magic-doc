@@ -23,6 +23,7 @@ from magic_doc.model.sub_modules.post_process import (
 )
 from magic_doc.model.sub_modules.self_modify import ModifiedPaddleOCR
 from magic_doc.utils.yaml_load import patch_yaml_load_with_env
+from magic_doc.utils import get_repo_directory
 
 logging.disable(logging.WARNING)
 
@@ -85,7 +86,7 @@ class DocAnalysis(object):
         if self.apply_formula:
             self.mfd_model = YOLO(self.configs["weights"]["mfd"])
             args = argparse.Namespace(
-                cfg_path="magic_doc/resources/model/UniMERNet/demo_old.yaml",
+                cfg_path=os.path.join(get_repo_directory(), "resources/model/UniMERNet/demo_old.yaml"),
                 options=None,
             )
             cfg = Config(args)

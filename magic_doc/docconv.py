@@ -13,7 +13,7 @@ from magic_doc.conv.base import BaseConv
 from magic_doc.conv.doc_antiword import Doc as Doc_antiword
 from magic_doc.conv.doc_libreoffice import Doc as Doc_soffice
 from magic_doc.conv.docx_xml_parse import Docx
-from magic_doc.conv.pdf import Pdf
+from magic_doc.conv.pdf_magicpdf import Pdf
 from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
 from smart_open import open
@@ -123,7 +123,7 @@ class DocConverter(object):
             byte_content = self.__read_file_as_bytes(doc_path)
             start_time = time.time()
             markdown_string = func_timeout(
-                self.__conv_timeout, conv.to_md, args=(byte_content, prog_updator)
+                conv_timeout, conv.to_md, args=(byte_content, prog_updator)
             )
             end_time = time.time()
             cost_time = round(end_time - start_time, 2)

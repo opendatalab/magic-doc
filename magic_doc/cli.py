@@ -64,7 +64,7 @@ def prepare_env(doc_file_name, doc_type="") -> str:
     if doc_type == "":
         doc_type = "unknown"
     local_parent_dir = os.path.join(
-        get_local_dir(), "magic-doc", doc_type, doc_file_name
+        get_local_dir(), "magic-doc", doc_type.lower(), doc_file_name
     )
 
     # local_image_dir = os.path.join(local_parent_dir, "images")

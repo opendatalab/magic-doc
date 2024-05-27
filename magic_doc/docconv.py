@@ -1,17 +1,14 @@
-
 import platform
 import time
-
 
 import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
 from loguru import logger
 
-
 from magic_doc.conv.base import BaseConv
 from magic_doc.conv.doc_antiword import Doc as Doc_antiword
-from magic_doc.conv.doc_libreoffice import Doc as Doc_soffice
+from magic_doc.conv.doc_libreoffice import Doc as Doc_libreoffice
 from magic_doc.conv.docx_xml_parse import Docx
 from magic_doc.conv.pdf import Pdf
 from magic_doc.conv.ppt_libreoffice import Ppt
@@ -70,30 +67,45 @@ class DocConverter(object):
         if system == 'Linux':
             self.doc_conv = Doc_antiword()
         else:
-            self.doc_conv = Doc_soffice()
+            self.doc_conv = Doc_libreoffice()
         self.docx_conv = Docx()
         self.pdf_conv = Pdf()
         self.ppt_conv = Ppt()
         self.pptx_conv = Pptx()
 
+    def __select_conv(self, doc_path: str, doc_bytes: bytes):
+        def check_magic_header(magic_header: bytes) -> bool:
+            if doc_bytes.startswith(magic_header):
+                return True
+            else:
+                raise ConvException("File is broken.")
 
-    def __select_conv(self, doc_path: str):
         """根据文件后缀选择转换器"""
         lower_case_path = doc_path.lower()
         if lower_case_path.endswith(".doc"):
-            return self.doc_conv
+            # OLE2
+            if check_magic_header(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"):
+                return self.doc_conv
         elif lower_case_path.endswith(".docx"):
-            return self.docx_conv
+            # PK
+            if check_magic_header(b"\x50\x4b\x03\x04"):
+                return self.docx_conv
         elif lower_case_path.endswith(".pdf"):
-            return self.pdf_conv
+            # %PDF
+            if check_magic_header(b"%PDF"):
+                return self.pdf_conv
         elif lower_case_path.endswith(".ppt"):
-            return self.ppt_conv
+            # OLE2
+            if check_magic_header(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"):
+                return self.ppt_conv
         elif lower_case_path.endswith(".pptx"):
-            return self.pptx_conv
+            # PK
+            if check_magic_header(b"\x50\x4b\x03\x04"):
+                return self.pptx_conv
         else:
             raise ConvException("Unsupported file format.")
 
-    def __read_file_as_bytes(self, doc_path: str):
+    def __read_file_as_bytes(self, doc_path: str) -> bytes:
         """
         支持从本地文件和s3文件读取
         """
@@ -119,8 +131,8 @@ class DocConverter(object):
         cost_time = 0
         try:
             prog_updator = FileBaseProgressUpdator(progress_file_path)
-            conv: BaseConv = self.__select_conv(doc_path)
             byte_content = self.__read_file_as_bytes(doc_path)
+            conv: BaseConv = self.__select_conv(doc_path, byte_content)
             start_time = time.time()
             markdown_string = func_timeout(
                 conv_timeout, conv.to_md, args=(byte_content, prog_updator)

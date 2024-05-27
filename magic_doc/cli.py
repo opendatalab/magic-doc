@@ -87,8 +87,11 @@ def parse_s3path(s3path: str):
     return p.bucket, p.key
 
 
-total_error_files = 0
 total_cost_time = 0
+total_convert_error = 0
+total_file_broken = 0
+total_unsupported_files = 0
+total_time_out = 0
 
 
 @click.command()
@@ -100,9 +103,12 @@ total_cost_time = 0
 def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
 
     def parse_doc(doc_path, pf_path=None):
-        """使用两个全局变量统计耗时和error数量"""
+        """使用全局变量统计耗时和error数量"""
         global total_cost_time
-        global total_error_files
+        global total_convert_error
+        global total_file_broken
+        global total_unsupported_files
+        global total_time_out
         try:
             '''创建同名进度缓存文件'''
             if not pf_path:
@@ -128,7 +134,15 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             return cost_time
         except Exception as e:
             logger.error(traceback.format_exc())
-            total_error_files += 1
+            # 只统计转换出错的数量
+            if "Convert failed" in str(e):
+                total_convert_error += 1
+            elif "Convert timeout" in str(e):
+                total_time_out += 1
+            elif "File is broken" in str(e):
+                total_file_broken += 1
+            elif "Unsupported file format" in str(e):
+                total_unsupported_files += 1
             # abort(f'Error: {traceback.format_exc()}')
 
     if not input_file_path:
@@ -146,7 +160,10 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             parse_doc(input_file_path, progress_file_path)
 
     logger.info(f"total cost time: {int(total_cost_time)} seconds")
-    logger.info(f"total error files: {total_error_files}")
+    logger.info(f"total convert error: {total_convert_error}")
+    logger.info(f"total file broken: {total_file_broken}")
+    logger.info(f"total unsupported files: {total_unsupported_files}")
+    logger.info(f"total time out: {total_time_out}")
 
 
 if __name__ == '__main__':

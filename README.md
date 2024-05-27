@@ -21,6 +21,13 @@ git clone https://github.com/magicpdf/Magic-Doc.git
 cd Magic-Doc
 pip install -r requirements.txt
 ```
+install libreoffice to convert doc/ppt
+```sh
+linux/osx
+apt-get/yum/brew install libreoffice
+win
+install libreoffice and add "install_dir\LibreOffice\program" to PATH
+```
 
 3.Run the command line
 
@@ -30,7 +37,7 @@ export PYTHONPATH=.
 win
 $env:PYTHONPATH += ";.\Magic-Doc\magic_doc"    
 ```
-```
+```sh
 python magic_doc/cli.py --help
 ```
 

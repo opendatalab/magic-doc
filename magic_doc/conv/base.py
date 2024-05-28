@@ -11,4 +11,6 @@ class BaseConv(ABC):
     def to_md(self, bits: bytes | str, pupdator:ConvProgressUpdator) -> str:
         return NotImplemented
 
-
+    def to_mid_result(self, bits: bytes | str, pupdator:ConvProgressUpdator) -> list[dict] | dict:
+        pupdator.update(100)
+        return {}

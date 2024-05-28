@@ -119,7 +119,7 @@ class DocConverter(object):
                 content_bytes = fin.read()
                 return content_bytes
 
-    def convert(self, doc_path: str, progress_file_path: str, conv_timeout=None):
+    def _timeout_convert(self, byte_content: bytes, progress_file_path: str, conv_method, conv_timeout=None):
         """
         在线快速解析
         doc_path: str, path to the document, support local file path and s3 path.
@@ -127,15 +127,13 @@ class DocConverter(object):
         return markdown string or raise ConvException.
         """
         conv_timeout = conv_timeout or self.__conv_timeout  # 根据这个时间判断函数超时
-        markdown_string = ""
+        res = ""
         cost_time = 0
         try:
             prog_updator = FileBaseProgressUpdator(progress_file_path)
-            byte_content = self.__read_file_as_bytes(doc_path)
-            conv: BaseConv = self.__select_conv(doc_path, byte_content)
             start_time = time.time()
-            markdown_string = func_timeout(
-                conv_timeout, conv.to_md, args=(byte_content, prog_updator)
+            res = func_timeout(
+                conv_timeout, conv_method, args=(byte_content, prog_updator)
             )
             end_time = time.time()
             cost_time = round(end_time - start_time, 2)
@@ -147,4 +145,28 @@ class DocConverter(object):
             logger.exception(e2)
             raise ConvException("Convert failed: %s" % str(e2))
 
-        return markdown_string, cost_time
+        return res, cost_time
+
+
+    def convert(self, doc_path: str, progress_file_path: str, conv_timeout=None):
+        """
+        在线快速解析
+        doc_path: str, path to the document, support local file path and s3 path.
+        progress_file_path: str, path to the progress file, support local file path only.
+        return markdown string or raise ConvException.
+        """
+        byte_content = self.__read_file_as_bytes(doc_path)
+        conv: BaseConv = self.__select_conv(doc_path, byte_content)
+        return self._timeout_convert(byte_content, progress_file_path, conv.to_md, conv_timeout)
+
+
+    def convert_to_mid_result(self, doc_path: str, progress_file_path: str, conv_timeout=None):
+        """
+        在线快速解析
+        doc_path: str, path to the document, support local file path and s3 path.
+        progress_file_path: str, path to the progress file, support local file path only.
+        return markdown string or raise ConvException.
+        """
+        byte_content = self.__read_file_as_bytes(doc_path)
+        conv: BaseConv = self.__select_conv(doc_path, byte_content)
+        return self._timeout_convert(byte_content, progress_file_path, conv.to_mid_result, conv_timeout)

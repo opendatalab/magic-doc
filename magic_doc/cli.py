@@ -92,6 +92,7 @@ total_convert_error = 0
 total_file_broken = 0
 total_unsupported_files = 0
 total_time_out = 0
+total_success_convert = 0
 
 
 @click.command()
@@ -109,6 +110,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
         global total_file_broken
         global total_unsupported_files
         global total_time_out
+        global total_success_convert
         try:
             '''创建同名进度缓存文件'''
             if not pf_path:
@@ -131,6 +133,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             out_put_dir = prepare_env(file_name, doc_type.lstrip("."))
             with open(os.path.join(out_put_dir, file_name + ".md"), "w", encoding='utf-8') as md_file:
                 md_file.write(markdown_string)
+            total_success_convert += 1
             return cost_time
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -164,6 +167,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
     logger.info(f"total file broken: {total_file_broken}")
     logger.info(f"total unsupported files: {total_unsupported_files}")
     logger.info(f"total time out: {total_time_out}")
+    logger.info(f"total success: {total_success_convert}")
 
 
 if __name__ == '__main__':

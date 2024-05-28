@@ -3,7 +3,7 @@ import json
 
 from loguru import logger
 from pathlib import Path
-from subprocess import Popen
+from subprocess import Popen, PIPE
 
 from werkzeug.datastructures import FileStorage
 
@@ -39,7 +39,8 @@ class DocExtractor(OfficeExtractor):
         else:
             cmd = f"./antiword -f -i 3 -o {dir.as_posix()} {doc_path.as_posix()}"
         logger.info(f"cmd: {cmd}")
-        process = Popen(cmd, shell=True, cwd=Path(cwd_path))
+        process = Popen(cmd, shell=True, cwd=Path(cwd_path), stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
         process.wait()
 
         shutil.rmtree(media_dir.absolute().as_posix())
@@ -48,7 +49,7 @@ class DocExtractor(OfficeExtractor):
         )
         code = process.returncode
         if code != 0:
-            err = process.stderr.read().decode()
+            err = stderr.decode()
             raise Exception(f"parse doc failed: {err}")
 
         pure_text_path = dir.joinpath("text")

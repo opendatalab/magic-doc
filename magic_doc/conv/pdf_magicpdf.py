@@ -46,7 +46,7 @@ class Pdf(BaseConv):
         pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
-        pupdator.update(90)
+        pupdator.update(100)
 
         pdf_mid_data = JsonCompressor.decompress_json(pipe.get_compress_pdf_mid_data())
         pdf_info_list = pdf_mid_data["pdf_info"]
@@ -67,7 +67,7 @@ class Pdf(BaseConv):
         pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
-        pupdator.update(90)
+        pupdator.update(100)
 
         pdf_mid_data = JsonCompressor.decompress_json(pipe.get_compress_pdf_mid_data())
         pdf_info_list = pdf_mid_data["pdf_info"]

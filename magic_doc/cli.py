@@ -129,7 +129,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             # click.echo(markdown_string)
             base_name, doc_type = os.path.splitext(doc_path)
             out_put_dir = prepare_env(file_name, doc_type.lstrip("."))
-            with open(os.path.join(out_put_dir, file_name + ".md"), "w") as md_file:
+            with open(os.path.join(out_put_dir, file_name + ".md"), "w", encoding='utf-8') as md_file:
                 md_file.write(markdown_string)
             return cost_time
         except Exception as e:

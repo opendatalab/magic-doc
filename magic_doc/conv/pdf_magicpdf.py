@@ -1,30 +1,24 @@
 import os
-import re
 
-from magic_pdf.libs.MakeContentConfig import DropMode
+from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
 from magic_pdf.pipe.UNIPipe import UNIPipe
-from werkzeug.datastructures import FileStorage
-
-from magic_doc.contrib.pdf.pdf_extractor import PDFExtractor
 from magic_doc.conv.base import BaseConv
 from magic_doc.model.doc_analysis import DocAnalysis, load_images_from_pdf
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from magic_doc.utils import get_repo_directory
 from magic_doc.utils.null_writer import NullWriter
-
-remove_img_pattern = re.compile(r"!\[.*?\]\(.*?\)")
-
+from magic_pdf.dict2md.ocr_mkcontent import union_make
+from magic_pdf.libs.json_compressor import JsonCompressor
 
 NULL_IMG_DIR = "/tmp"
-
 
 class SingletonModelWrapper:
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(SingletonModelWrapper, cls).__new__(cls)
-            cls.instance.doc_analysis = DocAnalysis(
+            cls.instance.doc_analysis = DocAnalysis(  # type: ignore
                 configs=os.path.join(
                     get_repo_directory(), "resources/model/model_configs.yaml"
                 ),
@@ -34,7 +28,7 @@ class SingletonModelWrapper:
     
     def __call__(self, bytes: bytes):
         images = load_images_from_pdf(bytes)
-        return self.doc_analysis(images)
+        return self.doc_analysis(images) # type: ignore
 
 
 class Pdf(BaseConv):
@@ -54,15 +48,30 @@ class Pdf(BaseConv):
         pipe.pipe_parse()
         pupdator.update(90)
 
-        md_content = pipe.pipe_mk_markdown(NULL_IMG_DIR, drop_mode=DropMode.NONE)
-        pupdator.update(100)
+        pdf_mid_data = JsonCompressor.decompress_json(pipe.get_compress_pdf_mid_data())
+        pdf_info_list = pdf_mid_data["pdf_info"]
+        md_content = union_make(pdf_info_list, MakeMode.NLP_MD, DropMode.NONE, NULL_IMG_DIR)
+        return md_content # type: ignore
 
-        no_img_md_content = re.sub(remove_img_pattern, "", md_content)  # type: ignore
-        no_img_md_content = re.sub(
-            r"^\s\s\n", "", no_img_md_content, flags=re.MULTILINE
-        )
-        return no_img_md_content
+    def to_mid_result(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> list[dict] | dict:
+        model_proc = SingletonModelWrapper()
+        pupdator.update(0)
 
+        model_list = model_proc(bits)  # type: ignore
+        pupdator.update(50)
+        jso_useful_key = {
+            "_pdf_type": "",
+            "model_list": model_list,
+        }
+        image_writer = NullWriter()
+        pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
+        pipe.pipe_classify()
+        pipe.pipe_parse()
+        pupdator.update(90)
+
+        pdf_mid_data = JsonCompressor.decompress_json(pipe.get_compress_pdf_mid_data())
+        pdf_info_list = pdf_mid_data["pdf_info"]
+        return pdf_info_list
 
 if __name__ == "__main__":
     with open("/opt/data/pdf/20240423/pdf_test2/ol006018w.pdf", "rb") as f:
@@ -71,6 +80,6 @@ if __name__ == "__main__":
         md_content = parser.to_md(
             bits_data, FileBaseProgressUpdator("debug/progress.txt")
         )
-
         with open("debug/pdf2md.by_model.md", "w") as f:
-            f.write(md_content)
+            f.write(md_content) # type: ignore
+

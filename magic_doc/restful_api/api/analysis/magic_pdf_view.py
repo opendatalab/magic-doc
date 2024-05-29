@@ -2,8 +2,8 @@ from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
 from pathlib import Path
-from .serialization import MagicPdfSchema
 from magic_doc.pdf_transform import DocConverter
+from .serialization import MagicPdfSchema
 from magic_doc.restful_api.common.custom_response import generate_response
 from loguru import logger
 

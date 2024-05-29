@@ -1,8 +1,13 @@
-from magic_doc.restful_api.api import create_app
+import sys
 from pathlib import Path
-import yaml
 
 base_dir = Path(__file__).resolve().parent
+root_dir = base_dir.parent.parent
+sys.path.append(str(root_dir))
+
+from api import create_app
+import yaml
+
 config_path = base_dir / "config/config.yaml"
 
 

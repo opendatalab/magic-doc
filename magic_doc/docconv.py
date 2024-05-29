@@ -10,7 +10,7 @@ from magic_doc.conv.base import BaseConv
 from magic_doc.conv.doc_antiword import Doc as Doc_antiword
 from magic_doc.conv.doc_libreoffice import Doc as Doc_libreoffice
 from magic_doc.conv.docx_xml_parse import Docx
-from magic_doc.conv.pdf import Pdf
+from magic_doc.conv.pdf_magicpdf import Pdf
 from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
 from smart_open import open

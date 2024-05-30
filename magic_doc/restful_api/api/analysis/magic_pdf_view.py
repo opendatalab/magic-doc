@@ -64,7 +64,8 @@ class MagicPdfView(Resource):
             app_config["AccessKeyID"],
             app_config["AccessKeySecret"],
             app_config["BucketName"],
-            app_config["Endpoint"]
+            app_config["Endpoint"],
+            app_config["UrlExpires"]
         )
         img_list = re.findall('"image_path": "(.*?)",', json.dumps(result))
         for img_path in img_list:

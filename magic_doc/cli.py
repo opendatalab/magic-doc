@@ -4,8 +4,8 @@ from datetime import datetime
 import click
 from pathlib import Path
 
-from magic_doc.common.config import get_s3_config
-from magic_doc.common.path_utils import get_local_dir, parse_s3path, prepare_env
+from magic_doc.utils.config import get_s3_config
+from magic_doc.utils.path_utils import get_local_dir, parse_s3path, prepare_env
 from magic_doc.docconv import DocConverter, S3Config, ParsePDFType
 from loguru import logger
 

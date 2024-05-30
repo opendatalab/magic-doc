@@ -31,8 +31,8 @@ class MagicPdfView(Resource):
         # ############ pdf解析  ###############
         file_name = str(Path(pdf_path).stem)
         pf_path = f"/tmp/{file_name}.txt"
-        pdf_dir = f"{current_app.static_folder}/pdf/{file_name}/"
-        NULL_IMG_DIR = f"{current_app.static_folder}/pdf/{file_name}/"
+        pdf_dir = f"{current_app.static_folder}/pdf/{file_name}"
+        NULL_IMG_DIR = f"{current_app.static_folder}/pdf/{file_name}"
         app_config = current_app.config
         if not Path(NULL_IMG_DIR).exists():
             Path(NULL_IMG_DIR).mkdir(parents=True, exist_ok=True)

@@ -177,7 +177,7 @@ class DocConverter(object):
         parent_path = os.path.dirname(doc_path)
         if doc_path.startswith("s3://"):
             image_writer = S3ReaderWriter(
-                self.__s3cfg.ak, self.__s3cfg.sk, self.__s3cfg.endpoint, "auto", remove_non_official_s3_args(doc_path)
+                self.__s3cfg.ak, self.__s3cfg.sk, self.__s3cfg.endpoint, "auto", os.path.join(os.path.dirname(remove_non_official_s3_args(doc_path)), "images")
         )
         else:
             image_writer = DiskReaderWriter(os.path.join(parent_path, "images"))

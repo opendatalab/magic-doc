@@ -1,26 +1,35 @@
+import os
 import platform
 import time
 from functools import partial
-import os
+
 import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
 from loguru import logger
+from magic_pdf.libs.path_utils import (
+    remove_non_official_s3_args,
+)
+from magic_pdf.rw.DiskReaderWriter import DiskReaderWriter
+from magic_pdf.rw.S3ReaderWriter import S3ReaderWriter
+from smart_open import open
 
 from magic_doc.conv.base import BaseConv
 from magic_doc.conv.doc_antiword import Doc as Doc_antiword
 from magic_doc.conv.doc_libreoffice import Doc as Doc_libreoffice
 from magic_doc.conv.docx_xml_parse import Docx
-from magic_doc.conv.pdf_magicpdf import Pdf
+from magic_doc.conv.pdf import Pdf as fastPdf
+from magic_doc.conv.pdf_magicpdf import Pdf as fullPdf
 from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
-from smart_open import open
-from magic_pdf.rw.DiskReaderWriter import DiskReaderWriter
-from magic_pdf.rw.S3ReaderWriter import S3ReaderWriter
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
-from magic_pdf.libs.path_utils import (
-    remove_non_official_s3_args,
-)
+from magic_doc.utils import is_digital
+
+
+class ParsePDFType:
+    FAST = "fast"
+    FULL = "full"
+
 
 class ConvException(Exception):
     def __init__(self, message):
@@ -37,8 +46,13 @@ class S3Config(object):
 
 
 class DocConverter(object):
-    def __init__(self, s3_config: S3Config, temp_dir: str = "/tmp/", conv_timeout=60):
-
+    def __init__(
+        self,
+        s3_config: S3Config,
+        temp_dir: str = "/tmp/",
+        parse_pdf_type=ParsePDFType.FULL,
+        conv_timeout=60,
+    ):
         """
         初始化一次，多次调用convert方法。避免模型加载和构造s3client的性能开销。
         """
@@ -51,8 +65,9 @@ class DocConverter(object):
                 endpoint_url=self.__s3cfg.endpoint,
                 config=Config(
                     s3={"addressing_style": "path"}, retries={"max_attempts": 8}
-                )
+                ),
             )
+        self.parse_pdf_type = parse_pdf_type
         self.__temp_dir = temp_dir
         self.__conv_timeout = conv_timeout  # 转换超时时间，单位秒
 
@@ -68,12 +83,13 @@ class DocConverter(object):
     def __init_conv(self):
         # 根据系统选择doc解析方式
         system = platform.system()
-        if system == 'Linux':
+        if system == "Linux":
             self.doc_conv = Doc_antiword()
         else:
             self.doc_conv = Doc_libreoffice()
         self.docx_conv = Docx()
-        self.pdf_conv = Pdf()
+        self.full_pdf_conv = fullPdf()
+        self.fast_pdf_conv = fastPdf()
         self.ppt_conv = Ppt()
         self.pptx_conv = Pptx()
 
@@ -97,7 +113,11 @@ class DocConverter(object):
         elif lower_case_path.endswith(".pdf"):
             # %PDF
             if check_magic_header(b"%PDF"):
-                return self.pdf_conv
+                if self.parse_pdf_type == ParsePDFType.FAST and is_digital(doc_bytes):
+                    return self.fast_pdf_conv
+                else:
+                    return self.full_pdf_conv
+
         elif lower_case_path.endswith(".ppt"):
             # OLE2
             if check_magic_header(b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"):
@@ -123,7 +143,13 @@ class DocConverter(object):
                 content_bytes = fin.read()
                 return content_bytes
 
-    def _timeout_convert(self, byte_content: bytes, progress_file_path: str, conv_method, conv_timeout=None):
+    def _timeout_convert(
+        self,
+        byte_content: bytes,
+        progress_file_path: str,
+        conv_method,
+        conv_timeout=None,
+    ):
         """
         在线快速解析
         doc_path: str, path to the document, support local file path and s3 path.
@@ -140,7 +166,7 @@ class DocConverter(object):
                 conv_timeout, conv_method, args=(byte_content, prog_updator)
             )
             end_time = time.time()
-            cost_time = round(end_time - start_time, 2)
+            cost_time = round(end_time - start_time, 3)
 
         except FunctionTimedOut as e1:
             logger.exception(e1)
@@ -151,7 +177,6 @@ class DocConverter(object):
 
         return res, cost_time
 
-
     def convert(self, doc_path: str, progress_file_path: str, conv_timeout=None):
         """
         在线快速解析
@@ -161,10 +186,13 @@ class DocConverter(object):
         """
         byte_content = self.__read_file_as_bytes(doc_path)
         conv: BaseConv = self.__select_conv(doc_path, byte_content)
-        return self._timeout_convert(byte_content, progress_file_path, conv.to_md, conv_timeout)
+        return self._timeout_convert(
+            byte_content, progress_file_path, conv.to_md, conv_timeout
+        )
 
-
-    def convert_to_mid_result(self, doc_path: str, progress_file_path: str, conv_timeout=None):
+    def convert_to_mid_result(
+        self, doc_path: str, progress_file_path: str, conv_timeout=None
+    ):
         """
         在线快速解析
         doc_path: str, path to the document, support local file path and s3 path.
@@ -177,9 +205,20 @@ class DocConverter(object):
         parent_path = os.path.dirname(doc_path)
         if doc_path.startswith("s3://"):
             image_writer = S3ReaderWriter(
-                self.__s3cfg.ak, self.__s3cfg.sk, self.__s3cfg.endpoint, "auto", remove_non_official_s3_args(doc_path)
-        )
+                self.__s3cfg.ak,
+                self.__s3cfg.sk,
+                self.__s3cfg.endpoint,
+                "auto",
+                os.path.join(
+                    os.path.dirname(remove_non_official_s3_args(doc_path)), "images"
+                ),
+            )
         else:
             image_writer = DiskReaderWriter(os.path.join(parent_path, "images"))
 
-        return self._timeout_convert(byte_content, progress_file_path, partial(conv.to_mid_result, image_writer), conv_timeout)
+        return self._timeout_convert(
+            byte_content,
+            progress_file_path,
+            partial(conv.to_mid_result, image_writer),
+            conv_timeout,
+        )

@@ -13,6 +13,10 @@ BaseConfig: &base
   BucketName: ""
   UrlExpires: 60
 
+  S3AK: ""
+  S3SK: ""
+  S3ENDPOINT: ""
+
 
 # 开发配置
 DevelopmentConfig:

@@ -140,7 +140,7 @@ class DocConverter(object):
                 conv_timeout, conv_method, args=(byte_content, prog_updator)
             )
             end_time = time.time()
-            cost_time = round(end_time - start_time, 2)
+            cost_time = round(end_time - start_time, 3)
 
         except FunctionTimedOut as e1:
             logger.exception(e1)

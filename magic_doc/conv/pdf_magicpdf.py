@@ -12,18 +12,23 @@ from magic_pdf.dict2md.ocr_mkcontent import union_make
 from magic_pdf.libs.json_compressor import JsonCompressor
 from magic_pdf.rw.AbsReaderWriter import AbsReaderWriter
 
+
 NULL_IMG_DIR = "/tmp"
 
 class SingletonModelWrapper:
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
+            apply_ocr = os.getenv("APPLY_OCR", "TRUE") == "TRUE" 
+            apply_layout = os.getenv("APPLY_LAYOUT", "TRUE") == "TRUE" 
+            apply_formula = os.getenv("APPLY_FORMULA", "FALSE") == "TRUE"
+            
             cls.instance = super(SingletonModelWrapper, cls).__new__(cls)
             cls.instance.doc_analysis = DocAnalysis(  # type: ignore
                 configs=os.path.join(
                     get_repo_directory(), "resources/model/model_configs.yaml"
                 ),
-                apply_ocr=True, apply_layout=True, apply_formula=False,
+                apply_ocr=apply_ocr, apply_layout=apply_layout, apply_formula=apply_formula,
             )
         return cls.instance
     

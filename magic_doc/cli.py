@@ -6,7 +6,7 @@ from pathlib import Path
 
 from magic_doc.common.config import get_s3_config
 from magic_doc.common.path_utils import get_local_dir, parse_s3path, prepare_env
-from magic_doc.docconv import DocConverter, S3Config
+from magic_doc.docconv import DocConverter, S3Config, ParsePDFType
 from loguru import logger
 
 log_level = "ERROR"
@@ -37,7 +37,8 @@ total_success_convert = 0
 @click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING,
               help='path to the progress file to save')
 @click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
-def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
+@click.option('-m', "--mode", "parse_mode", type=click.Choice([ParsePDFType.FAST, ParsePDFType.FULL]), default=ParsePDFType.FAST, help="fast: without math formula, full: with math formula")
+def cli_conv(input_file_path, progress_file_path, parse_mode, conv_timeout=None):
     global total_cost_time, total_convert_error, total_file_broken, \
         total_unsupported_files, total_time_out, total_success_convert
 
@@ -58,7 +59,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             else:
                 '''非s3路径不需要初始化s3配置'''
                 s3_config = None
-            doc_conv = DocConverter(s3_config)
+            doc_conv = DocConverter(s3_config, parse_pdf_type=parse_mode)
             markdown_string, cost_time = doc_conv.convert(doc_path, pf_path, conv_timeout)
             total_cost_time += cost_time
             logger.info(f"convert {doc_path} to markdown, cost {cost_time} seconds")

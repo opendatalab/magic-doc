@@ -1,3 +1,5 @@
+import time
+
 import requests
 from flask import request, current_app
 from flask_restful import Resource
@@ -12,6 +14,7 @@ from loguru import logger
 class MagicPdfView(Resource):
     @logger.catch
     def post(self):
+        t0 = time.time()
         magic_pdf_schema = MagicPdfSchema()
         try:
             params = magic_pdf_schema.load(request.get_json())
@@ -33,5 +36,11 @@ class MagicPdfView(Resource):
             docconv = DocConverter(None)
         else:
             docconv = DocConverter(None)
+        t1 = time.time()
+        logger.info(f"pdf api cost_time:{t1 - t0}")
+        logger.info(f"start convert_to_mid_result:{t1}")
         result = docconv.convert_to_mid_result(pdf_path, pf_path, 60)
+        t2 = time.time()
+        logger.info(f"end convert_to_mid_result:{t1}")
+        logger.info(f"cost_time:{t2 - t1}")
         return generate_response(data=result, markDownUrl=pdf_path)

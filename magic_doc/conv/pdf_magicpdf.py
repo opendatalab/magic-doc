@@ -10,6 +10,7 @@ from magic_doc.utils import get_repo_directory
 from magic_doc.utils.null_writer import NullWriter
 from magic_pdf.dict2md.ocr_mkcontent import union_make
 from magic_pdf.libs.json_compressor import JsonCompressor
+from magic_pdf.rw.AbsReaderWriter import AbsReaderWriter
 
 NULL_IMG_DIR = "/tmp"
 
@@ -53,7 +54,7 @@ class Pdf(BaseConv):
         md_content = union_make(pdf_info_list, MakeMode.NLP_MD, DropMode.NONE, NULL_IMG_DIR)
         return md_content # type: ignore
 
-    def to_mid_result(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> list[dict] | dict:
+    def to_mid_result(self, image_writer: AbsReaderWriter, bits: bytes | str, pupdator: ConvProgressUpdator) -> list[dict] | dict:
         model_proc = SingletonModelWrapper()
         pupdator.update(0)
 
@@ -63,7 +64,7 @@ class Pdf(BaseConv):
             "_pdf_type": "",
             "model_list": model_list,
         }
-        image_writer = NullWriter()
+
         pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()

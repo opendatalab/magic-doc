@@ -1,6 +1,7 @@
 import platform
 import time
-
+from functools import partial
+import os
 import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
@@ -14,9 +15,12 @@ from magic_doc.conv.pdf_magicpdf import Pdf
 from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
 from smart_open import open
-
+from magic_pdf.rw.DiskReaderWriter import DiskReaderWriter
+from magic_pdf.rw.S3ReaderWriter import S3ReaderWriter
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
-
+from magic_pdf.libs.path_utils import (
+    remove_non_official_s3_args,
+)
 
 class ConvException(Exception):
     def __init__(self, message):
@@ -169,4 +173,13 @@ class DocConverter(object):
         """
         byte_content = self.__read_file_as_bytes(doc_path)
         conv: BaseConv = self.__select_conv(doc_path, byte_content)
-        return self._timeout_convert(byte_content, progress_file_path, conv.to_mid_result, conv_timeout)
+
+        parent_path = os.path.dirname(doc_path)
+        if doc_path.startswith("s3://"):
+            image_writer = S3ReaderWriter(
+                self.__s3cfg.ak, self.__s3cfg.sk, self.__s3cfg.endpoint, "auto", remove_non_official_s3_args(doc_path)
+        )
+        else:
+            image_writer = DiskReaderWriter(os.path.join(parent_path, "images"))
+
+        return self._timeout_convert(byte_content, progress_file_path, partial(conv.to_mid_result, image_writer), conv_timeout)

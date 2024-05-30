@@ -69,7 +69,8 @@ class MagicPdfView(Resource):
         img_list = re.findall('"image_path": "(.*?)",', json.dumps(result))
         for img_path in img_list:
             img_object_name = f"pdf/{file_name}/{Path(img_path).name}"
-            oss_rep = oss_client.put_file(app_config["BucketName"], img_object_name, img_path)
+            local_img_path = f"{NULL_IMG_DIR}/images/{Path(img_path).name}"
+            oss_rep = oss_client.put_file(app_config["BucketName"], img_object_name, local_img_path)
             file_link = oss_rep["file_link"]
             md_content.replace(img_path, file_link)
         md_object_name = f"pdf/{file_name}/{file_name}.md"

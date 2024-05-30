@@ -1,5 +1,3 @@
-import json
-import re
 import time
 import requests
 from flask import request, current_app
@@ -67,13 +65,13 @@ class MagicPdfView(Resource):
             app_config["Endpoint"],
             app_config["UrlExpires"]
         )
-        img_list = re.findall('"image_path": "(.*?)",', json.dumps(result))
+        img_list = Path(f"{NULL_IMG_DIR}/images").glob('*') if Path(f"{NULL_IMG_DIR}/images").exists() else []
         for img_path in img_list:
             img_object_name = f"pdf/{file_name}/{Path(img_path).name}"
             local_img_path = f"{NULL_IMG_DIR}/images/{Path(img_path).name}"
             oss_rep = oss_client.put_file(app_config["BucketName"], img_object_name, local_img_path)
             file_link = oss_rep["file_link"]
-            md_content.replace(img_path, file_link)
+            md_content.replace(str(img_path), file_link)
         md_object_name = f"pdf/{file_name}/{file_name}.md"
         oss_rep = oss_client.put_file(app_config["BucketName"], md_object_name, local_md_path)
         md_link = oss_rep["file_link"]

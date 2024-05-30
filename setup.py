@@ -8,8 +8,8 @@ def parse_requirements(filename):
 
     for line in lines:
         if "http" in line:
-            pkg_name_with_version = line.split('/')[-1].split('-')[0]
-            requires.append(pkg_name_with_version)
+            pkg_name_without_url = line.split('@')[0].strip()
+            requires.append(pkg_name_without_url)
         else:
             requires.append(line)
 
@@ -29,8 +29,6 @@ def get_version():
         return "0.0.0"
 
 
-requires = parse_requirements('requirements.txt')
-
 setup(
     name="magic_doc",  # 项目名
     # version="0.1.3",  # 版本号
@@ -41,7 +39,7 @@ setup(
             'magic_doc.bin': ['**'],  # 包含magic_doc.bin目录下的所有文件
             'magic_doc.resources': ['**']  # 包含magic_doc.resources目录下的所有文件
     },
-    install_requires=requires,  # 项目依赖的第三方库
+    install_requires=parse_requirements('requirements.txt'),  # 项目依赖的第三方库
     python_requires=">=3.10",  # 项目依赖的 Python 版本
     # entry_points={"console_scripts": ["my_command=my_project.main:run"]}, # 项目提供的可执行命令
     include_package_data=True,

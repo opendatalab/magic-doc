@@ -2,7 +2,7 @@ import os
 
 from s3pathlib import S3Path
 
-from magic_doc.common.config import read_config
+from magic_doc.utils.config import read_config
 
 
 def get_local_dir():

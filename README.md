@@ -61,9 +61,9 @@ pip install -r requirements.txt
 
 * 安装模型依赖的三方库
 ```text
-pip install unimernet
-
 pip install -r requirements.model.txt
+
+pip install unimernet
 
 pip install --extra-index-url https://miropsota.github.io/torch_packages_builder detectron2==0.6+pt2.2.2cu121
 

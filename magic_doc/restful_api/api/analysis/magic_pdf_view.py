@@ -1,7 +1,4 @@
-import asyncio
 import time
-from concurrent.futures import ThreadPoolExecutor
-
 import requests
 from flask import request, current_app
 from flask_restful import Resource
@@ -13,6 +10,7 @@ from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
 from magic_pdf.dict2md.ocr_mkcontent import union_make
 from magic_doc.restful_api.common.oss.oss import Oss
 from .ext import upload_image_to_oss
+from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 from magic_doc.restful_api.common.custom_response import generate_response
 from loguru import logger
 
@@ -73,8 +71,10 @@ class MagicPdfView(Resource):
             app_config["UrlExpires"]
         )
         img_list = Path(f"{NULL_IMG_DIR}/images").glob('*') if Path(f"{NULL_IMG_DIR}/images").exists() else []
-        for img_path in img_list:
-            executor.submit(upload_image_to_oss, oss_client, file_name, img_path, NULL_IMG_DIR, app_config["BucketName"], "md_content")
+        all_task = [executor.submit(upload_image_to_oss, oss_client, file_name, img_path, NULL_IMG_DIR, app_config["BucketName"], "md_content") for img_path in img_list]
+        wait(all_task, return_when=ALL_COMPLETED)
+        for task in all_task:
+            md_content.replace(task[0], task[1])
         _t1 = time.time()
         logger.info(f"upload img cost_time:{_t1 - _t0}")
         md_object_name = f"pdf/{file_name}/{file_name}.md"

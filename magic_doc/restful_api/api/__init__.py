@@ -40,7 +40,7 @@ def create_app(config):
     if config is None:
         config = {}
     app.config.update(config)
-    setup_log(config)
+    init_app_log(config)
     # _register_db(app)
     migrate.init_app(app=app, db=db)
     jwt.init_app(app=app)

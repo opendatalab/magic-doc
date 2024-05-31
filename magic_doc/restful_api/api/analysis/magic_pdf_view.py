@@ -75,7 +75,7 @@ class MagicPdfView(Resource):
         wait(all_task, return_when=ALL_COMPLETED)
         for task in all_task:
             task_result = task.result()
-            md_content.replace(task_result[0], task_result[1])
+            md_content = md_content.replace(task_result[0], task_result[1])
         _t1 = time.time()
         logger.info(f"upload img cost_time:{_t1 - _t0}")
         md_object_name = f"pdf/{file_name}/{file_name}.md"

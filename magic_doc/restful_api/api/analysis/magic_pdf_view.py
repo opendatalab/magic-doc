@@ -1,4 +1,7 @@
+import asyncio
 import time
+from concurrent.futures import ThreadPoolExecutor
+
 import requests
 from flask import request, current_app
 from flask_restful import Resource
@@ -9,8 +12,11 @@ from .serialization import MagicPdfSchema
 from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
 from magic_pdf.dict2md.ocr_mkcontent import union_make
 from magic_doc.restful_api.common.oss.oss import Oss
+from .ext import upload_image_to_oss
 from magic_doc.restful_api.common.custom_response import generate_response
 from loguru import logger
+
+executor = ThreadPoolExecutor()
 
 
 class MagicPdfView(Resource):
@@ -46,18 +52,19 @@ class MagicPdfView(Resource):
         else:
             doc_conv = DocConverter(None)
         t1 = time.time()
-        logger.info(f"pdf api cost_time:{t1 - t0}")
-        logger.info(f"start convert_to_mid_result:{t1}")
+        logger.info(f"param init cost_time:{t1 - t0}")
         result = doc_conv.convert_to_mid_result(pdf_path, pf_path, 60)
         t2 = time.time()
-        logger.info(f"end convert_to_mid_result:{t1}")
-        logger.info(f"cost_time:{t2 - t1}")
-
+        logger.info(f"pdf doc_conv cost_time:{t2 - t1}")
         md_content = union_make(result[0], MakeMode.MM_MD, DropMode.NONE, NULL_IMG_DIR)
+        t3 = time.time()
+        logger.info(f"make markdown cost_time:{t3 - t2}")
         local_md_path = f"{pdf_dir}/{file_name}.md"
         with open(local_md_path, "w") as f:
             f.write(md_content)
-
+        t4 = time.time()
+        logger.info(f"save markdown cost_time:{t4 - t3}")
+        _t0 = time.time()
         oss_client = Oss(
             app_config["AccessKeyID"],
             app_config["AccessKeySecret"],
@@ -67,13 +74,13 @@ class MagicPdfView(Resource):
         )
         img_list = Path(f"{NULL_IMG_DIR}/images").glob('*') if Path(f"{NULL_IMG_DIR}/images").exists() else []
         for img_path in img_list:
-            img_object_name = f"pdf/{file_name}/{Path(img_path).name}"
-            local_img_path = f"{NULL_IMG_DIR}/images/{Path(img_path).name}"
-            oss_rep = oss_client.put_file(app_config["BucketName"], img_object_name, local_img_path)
-            file_link = oss_rep["file_link"]
-            md_content.replace(str(img_path), file_link)
+            executor.submit(upload_image_to_oss, oss_client, file_name, img_path, NULL_IMG_DIR, app_config["BucketName"], "md_content")
+        _t1 = time.time()
+        logger.info(f"upload img cost_time:{_t1 - _t0}")
         md_object_name = f"pdf/{file_name}/{file_name}.md"
         oss_rep = oss_client.put_file(app_config["BucketName"], md_object_name, local_md_path)
         md_link = oss_rep["file_link"]
+        _t2 = time.time()
+        logger.info(f"upload md cost_time:{_t2 - _t1}")
 
         return generate_response(markDownUrl=md_link)

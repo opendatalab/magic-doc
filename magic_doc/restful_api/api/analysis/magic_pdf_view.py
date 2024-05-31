@@ -57,9 +57,9 @@ class MagicPdfView(Resource):
         md_content = union_make(result[0], MakeMode.MM_MD, DropMode.NONE, NULL_IMG_DIR)
         t3 = time.time()
         logger.info(f"make markdown cost_time:{t3 - t2}")
-        local_md_path = f"{pdf_dir}/{file_name}.md"
-        with open(local_md_path, "w") as f:
-            f.write(md_content)
+        # local_md_path = f"{pdf_dir}/{file_name}.md"
+        # with open(local_md_path, "w") as f:
+        #     f.write(md_content)
         t4 = time.time()
         logger.info(f"save markdown cost_time:{t4 - t3}")
         _t0 = time.time()
@@ -79,7 +79,7 @@ class MagicPdfView(Resource):
         _t1 = time.time()
         logger.info(f"upload img cost_time:{_t1 - _t0}")
         md_object_name = f"pdf/{file_name}/{file_name}.md"
-        oss_rep = oss_client.put_file(app_config["BucketName"], md_object_name, local_md_path)
+        oss_rep = oss_client.pub_object(app_config["BucketName"], md_object_name, md_content)
         md_link = oss_rep["file_link"]
         _t2 = time.time()
         logger.info(f"upload md cost_time:{_t2 - _t1}")

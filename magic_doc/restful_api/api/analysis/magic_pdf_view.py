@@ -71,10 +71,11 @@ class MagicPdfView(Resource):
             app_config["UrlExpires"]
         )
         img_list = Path(f"{NULL_IMG_DIR}/images").glob('*') if Path(f"{NULL_IMG_DIR}/images").exists() else []
-        all_task = [executor.submit(upload_image_to_oss, oss_client, file_name, img_path, NULL_IMG_DIR, app_config["BucketName"], "md_content") for img_path in img_list]
+        all_task = [executor.submit(upload_image_to_oss, oss_client, file_name, img_path, NULL_IMG_DIR, app_config["BucketName"]) for img_path in img_list]
         wait(all_task, return_when=ALL_COMPLETED)
         for task in all_task:
-            md_content.replace(task[0], task[1])
+            task_result = task.result()
+            md_content.replace(task_result[0], task_result[1])
         _t1 = time.time()
         logger.info(f"upload img cost_time:{_t1 - _t0}")
         md_object_name = f"pdf/{file_name}/{file_name}.md"

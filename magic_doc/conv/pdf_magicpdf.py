@@ -2,6 +2,7 @@ import os
 
 from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
 from magic_pdf.pipe.UNIPipe import UNIPipe
+from magic_pdf.pipe.OCRPipe import OCRPipe
 from magic_doc.conv.base import BaseConv
 from magic_doc.model.doc_analysis import DocAnalysis, load_images_from_pdf
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
@@ -49,7 +50,7 @@ class Pdf(BaseConv):
             "model_list": model_list,
         }
         image_writer = NullWriter()
-        pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
+        pipe = OCRPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)
@@ -70,7 +71,7 @@ class Pdf(BaseConv):
             "model_list": model_list,
         }
 
-        pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
+        pipe = OCRPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)

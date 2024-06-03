@@ -50,7 +50,7 @@ class Pdf(BaseConv):
             "model_list": model_list,
         }
         image_writer = NullWriter()
-        pipe = OCRPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
+        pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)
@@ -71,7 +71,7 @@ class Pdf(BaseConv):
             "model_list": model_list,
         }
 
-        pipe = OCRPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
+        pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
         pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)

@@ -55,7 +55,7 @@ class MagicPdfView(Resource):
         result = doc_conv.convert_to_mid_result(pdf_path, pf_path, 60)
         t2 = time.time()
         logger.info(f"pdf doc_conv cost_time:{t2 - t1}")
-        md_content = json.dumps(ocr_mk_mm_markdown_with_para_and_pagination(result["pdf_info"], NULL_IMG_DIR), ensure_ascii=False)
+        md_content = json.dumps(ocr_mk_mm_markdown_with_para_and_pagination(result[0], NULL_IMG_DIR), ensure_ascii=False)
         t3 = time.time()
         logger.info(f"make markdown cost_time:{t3 - t2}")
         # local_md_path = f"{pdf_dir}/{file_name}.md"

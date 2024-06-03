@@ -33,7 +33,7 @@ py-asciimath==0.3.0
 PyJWT==2.8.0
 pytz==2024.1
 PyYAML==6.0.1
-requests==2.31.0
+requests==2.32.2
 six==1.16.0
 SQLAlchemy==2.0.30
 typing_extensions==4.11.0

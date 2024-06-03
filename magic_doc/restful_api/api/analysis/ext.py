@@ -13,3 +13,9 @@ def upload_image_to_oss(oss_client, file_name, img_path, NULL_IMG_DIR, bucket_na
     file_link = oss_rep["file_link"]
     return str(img_path), file_link
 
+
+def upload_md_to_oss(oss_client, bucket_name, md_object_name, md_content):
+    oss_rep = oss_client.pub_object(bucket_name, md_object_name, md_content)
+    md_link = oss_rep["file_link"]
+    return md_link
+

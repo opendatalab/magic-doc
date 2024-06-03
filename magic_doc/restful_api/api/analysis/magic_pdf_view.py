@@ -1,3 +1,4 @@
+import json
 import re
 import time
 import requests
@@ -7,10 +8,9 @@ from marshmallow import ValidationError
 from pathlib import Path
 from magic_doc.pdf_transform import DocConverter, S3Config
 from .serialization import MagicPdfSchema
-from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
-from magic_pdf.dict2md.ocr_mkcontent import union_make
+from magic_pdf.dict2md.ocr_mkcontent import ocr_mk_mm_markdown_with_para_and_pagination
 from magic_doc.restful_api.common.oss.oss import Oss
-from .ext import upload_image_to_oss
+from .ext import upload_image_to_oss, upload_md_to_oss
 from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 from magic_doc.restful_api.common.custom_response import generate_response
 from loguru import logger
@@ -55,11 +55,11 @@ class MagicPdfView(Resource):
         result = doc_conv.convert_to_mid_result(pdf_path, pf_path, 60)
         t2 = time.time()
         logger.info(f"pdf doc_conv cost_time:{t2 - t1}")
-        md_content = union_make(result[0], MakeMode.MM_MD, DropMode.NONE, NULL_IMG_DIR)
+        md_content = json.dumps(ocr_mk_mm_markdown_with_para_and_pagination(result["pdf_info"], NULL_IMG_DIR), ensure_ascii=False)
         t3 = time.time()
         logger.info(f"make markdown cost_time:{t3 - t2}")
         # local_md_path = f"{pdf_dir}/{file_name}.md"
-        # with open(local_md_path, "w") as f:
+        # with open(local_md_path, "w", encoding="utf-8") as f:
         #     f.write(md_content)
         # t4 = time.time()
         # logger.info(f"save markdown cost_time:{t4 - t3}")
@@ -80,10 +80,14 @@ class MagicPdfView(Resource):
             md_content = regex.sub(f"({task_result[1]}", md_content)
         _t1 = time.time()
         logger.info(f"upload img cost_time:{_t1 - _t0}")
-        md_object_name = f"pdf/{file_name}/{file_name}.md"
-        oss_rep = oss_client.pub_object(app_config["BucketName"], md_object_name, md_content)
-        md_link = oss_rep["file_link"]
+
+        all_md_task = [executor.submit(upload_md_to_oss, oss_client, app_config["BucketName"], f"pdf/{file_name}/{md.get('page_no', n)}.md", md["md_content"]) for n, md in enumerate(json.loads(md_content))]
+        wait(all_md_task, return_when=ALL_COMPLETED)
+        md_link_list = []
+        for task in all_md_task:
+            task_result = task.result()
+            md_link_list.append(task_result)
         _t2 = time.time()
         logger.info(f"upload md cost_time:{_t2 - _t1}")
 
-        return generate_response(markDownUrl=md_link)
+        return generate_response(markDownUrl=md_link_list)

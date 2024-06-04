@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-import subprocess
+from magic_doc.libs.version import __version__
 def parse_requirements(filename):
     with open(filename) as f:
         lines = f.read().splitlines()
@@ -9,33 +9,20 @@ def parse_requirements(filename):
     for line in lines:
         if "http" in line:
             pkg_name_without_url = line.split('@')[0].strip()
+            if pkg_name_without_url == "magic_pdf":
+                pkg_name_without_url = "magic_pdf>=0.4.25"
             requires.append(pkg_name_without_url)
         else:
             requires.append(line)
 
     return requires
 
-def get_version():
-    command = ["git", "describe", "--tags"]
-    try:
-        version = subprocess.check_output(command).decode().strip()
-        version_parts = version.split("-")
-        if len(version_parts) > 1 and version_parts[0].startswith("magic_doc"):
-            return version_parts[1]
-        else:
-            raise ValueError(f"Invalid version tag {version}. Expected format is magic_pdf-<version>-released.")
-    except Exception as e:
-        print(e)
-        return "0.0.0"
-
 
 setup(
     name="magic_doc",  # 项目名
-    # version="0.1.3",  # 版本号
-    version=get_version(),  # 自动从tag中获取版本号
+    version=__version__,  # 自动从tag中获取版本号
     packages=find_packages()+['magic_doc.bin', 'magic_doc.resources'],  # 包含所有的包
     package_data={
-            # 'magic_doc.bin': ['linux/*', 'linux/share/antiword/*'],  # 包含magic_doc.bin目录下的所有文件
             'magic_doc.bin': ['**'],  # 包含magic_doc.bin目录下的所有文件
             'magic_doc.resources': ['**']  # 包含magic_doc.resources目录下的所有文件
     },

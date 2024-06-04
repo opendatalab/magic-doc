@@ -76,8 +76,10 @@ class MagicPdfView(Resource):
         wait(all_task, return_when=ALL_COMPLETED)
         for task in all_task:
             task_result = task.result()
-            regex = re.compile(fr'\((.*?{Path(task_result[0]).name})')
-            md_content = regex.sub(f"({task_result[1]}", md_content)
+            regex = re.compile(fr'.*\((.*?{Path(task_result[0]).name})')
+            regex_result = regex.search(md_content)
+            if regex_result:
+                md_content = md_content.replace(regex_result.group(1), task_result[1])
         _t1 = time.time()
         logger.info(f"upload img cost_time:{_t1 - _t0}")
 

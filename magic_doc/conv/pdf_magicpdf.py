@@ -34,7 +34,7 @@ class SingletonModelWrapper:
         return cls.instance
     
     def __call__(self, bytes: bytes):
-        images = load_images_from_pdf(bytes)
+        images = load_images_from_pdf(bytes, dpi=200)
         return self.doc_analysis(images) # type: ignore
 
 

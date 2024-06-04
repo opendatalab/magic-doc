@@ -3,6 +3,7 @@ import traceback
 from datetime import datetime
 import click
 from pathlib import Path
+from magic_doc.libs.version import __version__
 
 from magic_doc.utils.config import get_s3_config
 from magic_doc.utils.path_utils import get_local_dir, parse_s3path, prepare_env
@@ -32,6 +33,7 @@ total_success_convert = 0
 
 
 @click.command()
+@click.version_option(__version__, "--version", "-v", help="显示版本信息")
 @click.option('-f', '--file-path', 'input_file_path', type=click.STRING,
               help='file path, support s3/local/list, list file need end with ".list"')
 @click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING,

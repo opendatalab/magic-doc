@@ -10,7 +10,7 @@ def parse_requirements(filename):
         if "http" in line:
             pkg_name_without_url = line.split('@')[0].strip()
             if pkg_name_without_url == "magic_pdf":
-                pkg_name_without_url = "magic_pdf>=0.4.25"
+                pkg_name_without_url = "magic_pdf>=0.4.26"
             requires.append(pkg_name_without_url)
         else:
             requires.append(line)

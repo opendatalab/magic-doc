@@ -21,3 +21,8 @@ def is_digital(bits: bytes) -> bool:
     
     with fitz.open(stream=bits) as doc:
         return _is_digital(doc)
+
+
+def split_to_chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]

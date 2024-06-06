@@ -21,7 +21,10 @@ from magic_doc.model.sub_modules.post_process import (
     get_croped_image,
     latex_rm_whitespace,
 )
-from magic_doc.model.sub_modules.self_modify import ModifiedPaddleOCR
+from magic_doc.model.parallel_ocr import ParallelOCR
+from magic_doc.model.seq_ocr import SeqOCR
+import paddle 
+
 from magic_doc.utils.yaml_load import patch_yaml_load_with_env
 from magic_doc.utils import get_repo_directory
 
@@ -108,7 +111,10 @@ class DocAnalysis(object):
                 ]
             )
         if self.apply_ocr:
-            self.ocr_model = ModifiedPaddleOCR(show_log=False)
+            if paddle.device.cuda.device_count() > 1:
+                self.ocr_model = ParallelOCR()
+            else:
+                self.ocr_model = SeqOCR(use_gpu=True)
 
         logging.info("DocAnalysis init done!")
 
@@ -154,7 +160,6 @@ class DocAnalysis(object):
 
             layout_res["page_info"] = dict(page_no=idx, height=img_H, width=img_W)
             doc_layout_result.append(layout_res)
-
         if self.apply_formula:
             # 公式识别，因为识别速度较慢，为了提速，把单个pdf的所有公式裁剪完，一起批量做识别。
             a = time.time()
@@ -176,6 +181,8 @@ class DocAnalysis(object):
 
         if self.apply_ocr:
             # ocr识别
+            ocr_det_reqs = []
+
             a = time.time()
             for idx, image in enumerate(image_list):
                 pil_img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
@@ -208,24 +215,23 @@ class DocAnalysis(object):
                         cropped_img = cv2.cvtColor(
                             np.asarray(cropped_img), cv2.COLOR_RGB2BGR
                         )
-                        ocr_res = self.ocr_model.ocr(
-                            cropped_img, mfd_res=single_page_mfdetrec_res
-                        )[0]
-                        if ocr_res:
-                            for box_ocr_res in ocr_res:
-                                p1, p2, p3, p4 = box_ocr_res[0]
-                                text, score = box_ocr_res[1]
-                                doc_layout_result[idx]["layout_dets"].append(
-                                    {
-                                        "category_id": 15,
-                                        "poly": p1 + p2 + p3 + p4,
-                                        "score": round(score, 2),
-                                        "text": text,
-                                    }
-                                )
+                        ocr_det_reqs.append((idx, cropped_img, single_page_mfdetrec_res))
+
+            for idx, ocr_res in self.ocr_model(ocr_det_reqs):
+                if ocr_res:
+                    for box_ocr_res in ocr_res:
+                        p1, p2, p3, p4 = box_ocr_res[0]
+                        text, score = box_ocr_res[1]
+                        doc_layout_result[idx]["layout_dets"].append(
+                            {
+                                "category_id": 15,
+                                "poly": p1 + p2 + p3 + p4,
+                                "score": round(score, 2),
+                                "text": text,
+                            }
+                        )
             b = time.time()
             logging.info("ocr time: {}".format(round(b - a, 2)))
-
         return doc_layout_result
 
 

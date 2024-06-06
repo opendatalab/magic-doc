@@ -5,7 +5,10 @@ from pathlib import Path
 from magic_doc.contrib.model import ExtractResponse, Content, Page
 from magic_doc.contrib.office import OfficeExtractor
 from typing import IO
+from io import BytesIO
 from werkzeug.datastructures import FileStorage
+
+from magic_doc.contrib.office.formula.omml import omml2tex
 
 
 class DocxExtractor(OfficeExtractor):
@@ -25,6 +28,7 @@ class DocxExtractor(OfficeExtractor):
         tag_body = f"{tag_w}body"
 
         content_list = []
+        text_count = 0
         with zipfile.ZipFile(docx_file_stream, "r") as docx:
             xml_content = docx.read("word/document.xml")
             tree = ET.XML(xml_content)
@@ -32,16 +36,46 @@ class DocxExtractor(OfficeExtractor):
 
             for child in body:
                 tag = child.tag.split("}")[-1]
+                if text_count >= self.max_text_count:
+                    break
+
                 match tag:
                     case "p":
                         text = ""
                         for ele in child.iter():
+                            if "math" in ele.tag:
+                                if ele.tag.endswith("oMath"):
+                                    math_xml = BytesIO()
+                                    ET.ElementTree(ele).write(
+                                        math_xml,
+                                        encoding="utf-8",
+                                        xml_declaration=True,
+                                    )
+                                    math_xml = math_xml.getvalue().decode("utf-8")
+                                    math_xml = "\n".join(math_xml.split("\n")[1:])
+                                    math_formula = "\n" + omml2tex(math_xml) + "\n"
+
+                                    text = text.strip()
+                                    if len(text) > 0:
+                                        text_count += len(text) + 1
+                                        content_list.append(
+                                            Content(type="text", data=text)
+                                        )
+                                        text = ""
+
+                                    text_count += len(math_formula)
+                                    content_list.append(
+                                        Content(type="md", data=math_formula)
+                                    )
+                                continue
                             if t := ele.text:
                                 if len(t) > 0:
                                     text += t
                         text = text.strip()
                         if len(text) > 0:
-                            content_list.append(Content(type="text", data=text+"\n"))
+                            text_count += len(text) + 1
+                            content_list.append(Content(type="text", data=text))
+                            text = ""
                     case "tbl":
                         col_size = len(list(child.find(f"{tag_w}tblGrid")))
                         md = "\n"
@@ -64,6 +98,7 @@ class DocxExtractor(OfficeExtractor):
                                 md += f" {t} |"
                             md += "\n"
                         md += "\n"
+                        text_count += len(md)
                         content_list.append(Content(type="md", data=md))
                     case "sectPr":
                         # docx section pointer, meaningless

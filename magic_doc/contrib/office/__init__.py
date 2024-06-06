@@ -23,6 +23,7 @@ class OfficeExtractor(Extractor, ABC):
         self.tpe = ThreadPoolExecutor(max_workers=30)
         self.counter = {}
         self.tmp_dir = Path("/tmp")
+        self.max_text_count = 50_0000
 
     # def generate_img_path(self, id: str, image_name: str) -> str:
     #     return f"s3://{self.config.s3_bucket}/{datetime.today().strftime('%Y-%m-%d')}/{id}/{image_name}"

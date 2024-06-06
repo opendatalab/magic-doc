@@ -169,10 +169,10 @@ class DocConverter(object):
             cost_time = round(end_time - start_time, 3)
 
         except FunctionTimedOut as e1:
-            logger.exception(e1)
+            # logger.exception(e1)
             raise ConvException("Convert timeout.")
         except Exception as e2:
-            logger.exception(e2)
+            # logger.exception(e2)
             raise ConvException("Convert failed: %s" % str(e2))
 
         return res, cost_time

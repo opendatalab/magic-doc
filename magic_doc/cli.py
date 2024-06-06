@@ -73,7 +73,7 @@ def cli_conv(input_file_path, progress_file_path, parse_mode, conv_timeout=None)
             total_success_convert += 1
             return cost_time
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.exception(e)
             # 只统计转换出错的数量
             if "Convert failed" in str(e):
                 total_convert_error += 1

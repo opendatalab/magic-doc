@@ -75,12 +75,15 @@ def setup(args):
     cfg.freeze()
     default_setup(cfg, args)
     
+    """ 
+    #TODO: 可以去掉？
     register_coco_instances(
         "scihub_train",
         {},
         cfg.SCIHUB_DATA_DIR_TRAIN + ".json",
         cfg.SCIHUB_DATA_DIR_TRAIN
     )
+    """
     
     return cfg
 
@@ -113,7 +116,7 @@ class Layoutlmv3_Predictor(object):
             "opts": ["MODEL.WEIGHTS", weights],
         }
         layout_args = DotDict(layout_args)
-
+        
         cfg = setup(layout_args)
         self.mapping = ["title", "plain text", "abandon", "figure", "figure_caption", "table", "table_caption", "table_footnote", "isolate_formula", "formula_caption"]
         MetadataCatalog.get(cfg.DATASETS.TRAIN[0]).thing_classes = self.mapping

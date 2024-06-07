@@ -23,6 +23,9 @@ from magic_doc.model.sub_modules.post_process import (
 )
 from magic_doc.model.parallel_ocr import ParallelOCR
 from magic_doc.model.seq_ocr import SeqOCR
+from magic_doc.model.parallel_layout import ParallelLayout
+from magic_doc.model.seq_layout import SeqLayout
+
 import paddle 
 
 from magic_doc.utils.yaml_load import patch_yaml_load_with_env
@@ -85,7 +88,11 @@ class DocAnalysis(object):
         logging.info("using device: {}".format(self.device))
         assert self.apply_layout, "DocAnalysis must contain layout model."
 
-        self.layout_model = Layoutlmv3_Predictor(self.configs["weights"]["layout"])
+        if torch.cuda.device_count() > 1:
+            self.layout_model = ParallelLayout(self.configs["weights"]["layout"])
+        else:
+            self.layout_model = SeqLayout(self.configs["weights"]["layout"])
+
         if self.apply_formula:
             self.mfd_model = YOLO(self.configs["weights"]["mfd"])
             args = argparse.Namespace(
@@ -132,9 +139,18 @@ class DocAnalysis(object):
         doc_layout_result = []
         latex_filling_list = []
         mf_image_list = []
+
+        layout_inference_reqs = [] 
+
         for idx, image in enumerate(image_list):
+            layout_inference_reqs.append((idx, image)) # 
+
+        layout_inference_results = self.layout_model(layout_inference_reqs)
+
+        for idx, layout_res in layout_inference_results:
+            image = image_list[idx]
             img_H, img_W = image.shape[0], image.shape[1]
-            layout_res = self.layout_model(image, ignore_catids=[])
+
             if self.apply_formula:
                 mfd_res = self.mfd_model.predict(
                     image, imgsz=1888, conf=0.25, iou=0.45, verbose=False
@@ -160,6 +176,7 @@ class DocAnalysis(object):
 
             layout_res["page_info"] = dict(page_no=idx, height=img_H, width=img_W)
             doc_layout_result.append(layout_res)
+        
         if self.apply_formula:
             # 公式识别，因为识别速度较慢，为了提速，把单个pdf的所有公式裁剪完，一起批量做识别。
             a = time.time()

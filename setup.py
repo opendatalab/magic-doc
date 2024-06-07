@@ -25,7 +25,7 @@ setup(
     package_data={
             'magic_doc.bin': ['**'],  # 包含magic_doc.bin目录下的所有文件
             'magic_doc.resources': ['**'],  # 包含magic_doc.resources目录下的所有文件
-            'magic_doc.office.formula': ['**']  # 包含magic_doc.office.formula目录下的所有文件
+            'magic_doc.contrib.office.formula': ['**']  # 包含magic_doc.office.formula目录下的所有文件
     },
     install_requires=parse_requirements('requirements.txt'),  # 项目依赖的第三方库
     python_requires=">=3.10",  # 项目依赖的 Python 版本

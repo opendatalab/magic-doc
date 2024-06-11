@@ -4,7 +4,7 @@ from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
 from magic_pdf.pipe.UNIPipe import UNIPipe
 from magic_pdf.pipe.OCRPipe import OCRPipe
 from magic_doc.conv.base import BaseConv
-from magic_doc.model.doc_analysis import DocAnalysis, load_images_from_pdf
+
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from magic_doc.utils import get_repo_directory
@@ -20,6 +20,7 @@ class SingletonModelWrapper:
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
+            from magic_doc.model.doc_analysis import DocAnalysis
             apply_ocr = os.getenv("APPLY_OCR", "TRUE") == "TRUE" 
             apply_layout = os.getenv("APPLY_LAYOUT", "TRUE") == "TRUE" 
             apply_formula = os.getenv("APPLY_FORMULA", "FALSE") == "TRUE"
@@ -34,6 +35,7 @@ class SingletonModelWrapper:
         return cls.instance
     
     def __call__(self, bytes: bytes):
+        from magic_doc.model.doc_analysis import load_images_from_pdf
         images = load_images_from_pdf(bytes, dpi=200)
         return self.doc_analysis(images) # type: ignore
 

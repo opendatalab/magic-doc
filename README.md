@@ -65,7 +65,6 @@ pip install -r requirements.model.txt
 
 pip install unimernet
 
-pip install --extra-index-url https://miropsota.github.io/torch_packages_builder detectron2==0.6+pt2.2.2cu121
 
 pip uninstall PyMuPDF
 

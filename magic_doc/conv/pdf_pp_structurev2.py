@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 
 import cv2
@@ -20,19 +21,20 @@ from magic_pdf.pipe.UNIPipe import UNIPipe
 
 NULL_IMG_DIR = "/tmp"
 
-def doc_analyze(pdf_bytes: bytes, ocr: bool = False):
-    ocr_engine = PPStructure(table=False, ocr=ocr, show_log=True)
+def doc_analyze(pdf_bytes: bytes, ocr: bool = False, show_log: bool = False):
+    ocr_engine = PPStructure(table=False, ocr=ocr, show_log=show_log)
 
     imgs = []
     with fitz.open("pdf", pdf_bytes) as doc:
         for index in range(0, doc.page_count):
             page = doc[index]
-            mat = fitz.Matrix(2, 2)
+            dpi = 200
+            mat = fitz.Matrix(dpi / 72, dpi / 72)
             pm = page.get_pixmap(matrix=mat, alpha=False)
 
             # if width or height > 2000 pixels, don't enlarge the image
-            if pm.width > 2000 or pm.height > 2000:
-                pm = page.get_pixmap(matrix=fitz.Matrix(1, 1), alpha=False)
+            # if pm.width > 2000 or pm.height > 2000:
+            #     pm = page.get_pixmap(matrix=fitz.Matrix(1, 1), alpha=False)
 
             img = Image.frombytes("RGB", [pm.width, pm.height], pm.samples)
             img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
@@ -101,7 +103,7 @@ def doc_analyze(pdf_bytes: bytes, ocr: bool = False):
                 line['category_id'] = 2
             else:
                 logger.warning(f"unknown type: {line['type']}")
-            line['score'] = 0.5
+            line['score'] = 0.5 + random.random() * 0.5
 
             res = line.pop('res', None)
             if res is not None and len(res) > 0:

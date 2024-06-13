@@ -6,7 +6,6 @@ from functools import partial
 import boto3
 from botocore.client import Config
 from func_timeout import FunctionTimedOut, func_timeout
-from loguru import logger
 from magic_pdf.libs.path_utils import (
     remove_non_official_s3_args,
 )
@@ -53,9 +52,6 @@ class DocConverter(object):
         parse_pdf_type=ParsePDFType.FAST,
         conv_timeout=60,
     ):
-        """
-        初始化一次，多次调用convert方法。避免模型加载和构造s3client的性能开销。
-        """
         self.__s3cfg = s3_config
         if self.__s3cfg:
             self.__s3cli = boto3.client(
@@ -69,15 +65,7 @@ class DocConverter(object):
             )
         self.parse_pdf_type = parse_pdf_type
         self.__temp_dir = temp_dir
-        self.__conv_timeout = conv_timeout  # 转换超时时间，单位秒
-
-        # if not self.__model_equation_recog_path or not self.__model_equation_detect_path or not self.__model_layout_path:
-        #     raise ConvException("Model path not found in environment variables: %s, %s, %s" % (MODEL_EQUATION_RECOG_PATH_VAR, MODEL_EQUATION_DETECT_PATH_VAR, MODEL_LAYOUT_PATH_VAR))
-        # else:
-        #     pass # TODO 初始化模型
-
-        ############################
-        # 初始化转换器，每个只实例化一次
+        self.__conv_timeout = conv_timeout
         self.__init_conv()
 
     def __init_conv(self):
@@ -89,7 +77,7 @@ class DocConverter(object):
             self.doc_conv = Doc_libreoffice()
         self.docx_conv = Docx()
         self.full_pdf_conv = fullPdf()
-        self.fast_pdf_conv = fastPdf()
+        self.fast_textpdf_conv = fastPdf()
         self.ppt_conv = Ppt()
         self.pptx_conv = Pptx()
 
@@ -113,8 +101,11 @@ class DocConverter(object):
         elif lower_case_path.endswith(".pdf"):
             # %PDF
             if check_magic_header(b"%PDF"):
-                if self.parse_pdf_type == ParsePDFType.FAST and is_digital(doc_bytes):
-                    return self.fast_pdf_conv
+                if self.parse_pdf_type == ParsePDFType.FAST:
+                    if is_digital(doc_bytes):
+                        return self.fast_textpdf_conv
+                    else:
+                        return None  # TODO, using paddleocr
                 else:
                     return self.full_pdf_conv
 

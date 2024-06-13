@@ -17,7 +17,8 @@ from magic_doc.conv.base import BaseConv
 from magic_doc.conv.doc_antiword import Doc as Doc_antiword
 from magic_doc.conv.doc_libreoffice import Doc as Doc_libreoffice
 from magic_doc.conv.docx_xml_parse import Docx
-from magic_doc.conv.pdf import Pdf as fastPdf
+from magic_doc.conv.pdf import Pdf as fastTextPdf
+from magic_doc.conv.pdf_pp_structurev2 import Pdf as liteOcrPdf
 from magic_doc.conv.pdf_magicpdf import Pdf as fullPdf
 from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
@@ -77,7 +78,8 @@ class DocConverter(object):
             self.doc_conv = Doc_libreoffice()
         self.docx_conv = Docx()
         self.full_pdf_conv = fullPdf()
-        self.fast_textpdf_conv = fastPdf()
+        self.fast_textpdf_conv = fastTextPdf()
+        self.lite_ocrpdf_conv = liteOcrPdf()
         self.ppt_conv = Ppt()
         self.pptx_conv = Pptx()
 
@@ -105,7 +107,7 @@ class DocConverter(object):
                     if is_digital(doc_bytes):
                         return self.fast_textpdf_conv
                     else:
-                        return None  # TODO, using paddleocr
+                        return self.lite_ocrpdf_conv
                 else:
                     return self.full_pdf_conv
 

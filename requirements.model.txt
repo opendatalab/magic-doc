@@ -1,6 +1,0 @@
---extra-index-url https://mirrors.aliyun.com/pypi/simple/
---extra-index-url https://miropsota.github.io/torch_packages_builder
-
-# detectron2==0.6+pt2.2.2cu121
-# Pillow==8.4.0
-

@@ -1,4 +1,3 @@
-
 <div id="top"></div>
 <div align="center">
 
@@ -6,7 +5,7 @@
 [![issue resolution](https://img.shields.io/github/issues-closed-raw/magicpdf/Magic-Doc)](https://github.com/magicpdf/Magic-Doc/issues)
 [![open issues](https://img.shields.io/github/issues-raw/magicpdf/Magic-Doc)](https://github.com/magicpdf/Magic-Doc/issues)
 
-[English](READMD.md) | [简体中文](README_zh-CN.md)
+[English](README.md) | [简体中文](README_zh-CN.md)
 
 </div>
 
@@ -15,9 +14,9 @@
 </div>
 
 
-### Install
+### 安装
 
-Install Dependencies
+安装依赖
 
 **linux/osx** 
 
@@ -27,12 +26,12 @@ apt-get/yum/brew install libreoffice
 
 **windows**
 ```text
-install libreoffice 
-append "install_dir\LibreOffice\program" to ENVIRONMENT PATH
+安装 libreoffice 
+添加 "install_dir\LibreOffice\program" to 环境变量 PATH
 ```
 
 
-Install Magic-Doc
+安装 Magic-Doc
 
 ```bash
 git clone https://github.com/magicpdf/Magic-Doc (#TODO)
@@ -42,12 +41,12 @@ python setup.py install
 ```
 
 
-## Introduction
+## 简介
 
-Magic-Doc is a lightweight open-source tool that allows users to convert mulitple file type (PPT/PPTX/DOC/DOCX/PDF) to markdown. It supports both local file and S3 file.
+Magic-Doc 是一个轻量级、开源的用于将多种格式的文档（PPT/PPTX/DOC/DOCX/PDF) 转化为 markdown 格式的工具。支持转换本地文档或者位于 AWS S3 上的文件
 
 
-## Example
+## 使用示例
 ```python
 from magic_doc.docconv import DocConverter, S3Config
 
@@ -56,9 +55,9 @@ converter = DocConverter(s3_config=s3_config)
 markdown_cotent, time_cost = converter("some_doc.pptx", "/tmp/convert_progress.txt", conv_timeout=300)
 ```
 
-## Performance
+## 性能
 
-| File Type        | Speed | 
+| 文件类型        | 转化速度| 
 | ------------------ | -------- | 
 | PDF (digital)        | 347 (page/s) | 
 | PDF (OCR)           | 2.7 (page/s)  |   #TODO 需要更新为多线程版本的 OCR 识别程序
@@ -67,14 +66,10 @@ markdown_cotent, time_cost = converter("some_doc.pptx", "/tmp/convert_progress.t
 | DOC                 | 600 (page/s)   | 
 | DOCX                | 1482 (page/s)   | 
 
-### All Thanks To Our Contributors:
 
-<a href="https://github.com/magicpdf/Magic-Doc/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=magicpdf/Magic-Doc" />
-</a>
 
-## License
+## 开源许可证
 
-This project is released under the [Apache 2.0 license](LICENSE).
+该项目采用[Apache 2.0 开源许可证](LICENSE)。
 
 <p align="right"><a href="#top">🔼 Back to top</a></p>

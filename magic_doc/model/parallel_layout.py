@@ -42,6 +42,6 @@ class ParallelLayout:
                     data = future.result()
                     results.extend(data)
                 except Exception as exc:
-                    print(f"failed to process orc, reason: ", exc)
+                    print(f"failed to process layout, reason: ", exc)
         return sorted(results, key=lambda x: x[0])
 

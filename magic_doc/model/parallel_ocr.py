@@ -41,5 +41,5 @@ class ParallelOCR:
                     data = future.result()
                     results.extend(data)
                 except Exception as exc:
-                    print(f"failed to process orc, reason: ", exc)
+                    print(f"failed to process ocr, reason: ", exc)
         return results

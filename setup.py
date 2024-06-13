@@ -1,4 +1,19 @@
 from setuptools import setup, find_packages
+from setuptools.command.install import install
+
+class CustomInstallCommand(install):
+    """Customize the install command to run extra steps."""
+    
+    def run(self):
+        import subprocess
+        # Put pre-installation steps here
+        print("****Running pre-installation tasks...***")
+        # You can run shell commands or call other functions here
+        
+        # Call the base class implementation of run() to do the standard install
+        install.run(self)
+        print("****Running post-installation tasks...***")
+
 from magic_doc.libs.version import __version__
 def parse_requirements(filename):
     with open(filename) as f:
@@ -27,7 +42,24 @@ setup(
             'magic_doc.resources': ['**'],  # 包含magic_doc.resources目录下的所有文件
             'magic_doc.contrib.office.formula': ['**']  # 包含magic_doc.contrib.office.formula目录下的所有文件
     },
-    install_requires=parse_requirements('requirements.txt'),  # 项目依赖的第三方库
+    install_requires=parse_requirements('requirements.tt.txt'),  # 项目依赖的第三方库
+    extras_require={
+        "full":[
+            "unimernet", 
+            "pdfplumber", 
+            "modelscope", 
+            "ipdb", 
+            "shapely", 
+            "pyclipper", 
+            "matplotlib", 
+            "tenacity", 
+            "ultralytics==8.2.26",
+            "transformers==4.40.1", 
+            "pillow==8.4.0"],
+    },
+    cmdclass={
+        'install': CustomInstallCommand,
+    },
     python_requires=">=3.10",  # 项目依赖的 Python 版本
     # entry_points={"console_scripts": ["my_command=my_project.main:run"]}, # 项目提供的可执行命令
     include_package_data=True,

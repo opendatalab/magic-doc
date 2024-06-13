@@ -107,7 +107,7 @@ class DocConverter(object):
                     if is_digital(doc_bytes):
                         return self.fast_textpdf_conv
                     else:
-                        return self.lite_ocrpdf_conv
+                        return self.full_pdf_conv # return self.lite_ocrpdf_conv
                 else:
                     return self.full_pdf_conv
 

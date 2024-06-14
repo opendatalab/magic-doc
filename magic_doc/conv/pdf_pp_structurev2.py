@@ -20,7 +20,7 @@ NULL_IMG_DIR = "/tmp"
 class Pdf(BaseConv):
     def to_md(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> str:
 
-        model_list = doc_analyze(bits, ocr=False)
+        model_list = doc_analyze(bits, ocr=True)
         pupdator.update(50)
         jso_useful_key = {
             "_pdf_type": "",
@@ -42,7 +42,7 @@ class Pdf(BaseConv):
 
         pupdator.update(0)
 
-        model_list = doc_analyze(bits)  # type: ignore
+        model_list = doc_analyze(bits, ocr=True)  # type: ignore
         pupdator.update(50)
         jso_useful_key = {
             "_pdf_type": "",

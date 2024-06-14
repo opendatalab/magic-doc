@@ -23,7 +23,7 @@ def parse_requirements(filename):
 
 
 setup(
-    name="magic_doc",  # 项目名
+    name="fairy_doc",  # 项目名
     version=__version__,  # 自动从tag中获取版本号
     packages=find_packages() + ["magic_doc.bin", "magic_doc.resources"],  # 包含所有的包
     package_data={

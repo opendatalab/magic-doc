@@ -2,7 +2,7 @@
 <div id="top"></div>
 <div align="center">
 
-[![license](./assets/license.svg)](https://github.com/magicpdf/Magic-Doc/tree/main/LICENSE)
+[![license](https://img.shields.io/github/license/magicpdf/Magic-Doc.svg)](https://github.com/magicpdf/Magic-Doc/tree/main/LICENSE)
 [![issue resolution](https://img.shields.io/github/issues-closed-raw/magicpdf/Magic-Doc)](https://github.com/magicpdf/Magic-Doc/issues)
 [![open issues](https://img.shields.io/github/issues-raw/magicpdf/Magic-Doc)](https://github.com/magicpdf/Magic-Doc/issues)
 

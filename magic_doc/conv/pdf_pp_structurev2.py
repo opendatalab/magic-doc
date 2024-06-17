@@ -23,12 +23,12 @@ class Pdf(BaseConv):
         model_list = doc_analyze(bits, ocr=True)
         pupdator.update(50)
         jso_useful_key = {
-            "_pdf_type": "",
+            "_pdf_type": "ocr",
             "model_list": model_list,
         }
         image_writer = NullWriter()
         pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
-        pipe.pipe_classify() # 默认ocrpipe的时候不需要再做分类，可以节省时间
+        # pipe.pipe_classify() # 默认ocrpipe的时候不需要再做分类，可以节省时间
         pipe.pipe_parse()
         pupdator.update(100)
 
@@ -45,12 +45,12 @@ class Pdf(BaseConv):
         model_list = doc_analyze(bits, ocr=True)  # type: ignore
         pupdator.update(50)
         jso_useful_key = {
-            "_pdf_type": "",
+            "_pdf_type": "ocr",
             "model_list": model_list,
         }
 
         pipe = UNIPipe(bits, jso_useful_key, image_writer, is_debug=True)  # type: ignore
-        pipe.pipe_classify()
+        # pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)
 

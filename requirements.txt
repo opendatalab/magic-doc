@@ -22,7 +22,6 @@ Jinja2==3.1.4
 lark-parser==0.12.0
 loguru==0.7.2
 lxml==5.1.1
-magic_html @ https://github.com/sixgad/magic-html/releases/download/magic_html-0.1.0-released/magic_html-0.1.0-py3-none-any.whl#sha256=8c6804d80494b78fdbe7b017fcc67017725c3cf4ebf833f8affb25ebc1e9f6f4
 Mako==1.3.5
 MarkupSafe==2.1.5
 marshmallow==3.21.2
@@ -42,10 +41,9 @@ Werkzeug==3.0.3
 boto3
 werkzeug
 python-pptx
-magic_pdf @ https://github.com/magicpdf/Magic-PDF/releases/download/magic_pdf-0.5.1-released/magic_pdf-0.5.1-py3-none-any.whl
+magic_pdf==0.5.4
 smart_open[s3]
 s3pathlib
-paddleocr>=2.7.3
-paddlepaddle-gpu==2.6.1
+paddleocr==2.7.3
+PyMuPDF==1.24.5
 fitz
-PyMuPDF

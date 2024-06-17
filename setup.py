@@ -37,6 +37,10 @@ if __name__ == "__main__":
             ],  # 包含magic_doc.contrib.office.formula目录下的所有文件
         },
         license='Apache 2.0',
+        extra_requires={
+            "gpu": ["paddlepaddle-gpu==2.6.1"],
+            "cpu": ["paddlepaddle==2.6.1"],
+        },
         description='A lightweight toolbox to manipulate documents',
         long_description=long_description,
         long_description_content_type='text/markdown',

@@ -3,7 +3,7 @@ from flask_restful import Resource
 from .serialization import MagicHtmlSchema
 from marshmallow import ValidationError
 from magic_doc.restful_api.common.custom_response import generate_response
-from magic_html import GeneralExtractor
+from magic_doc.contrib.magic_html import GeneralExtractor
 from loguru import logger
 
 extractor = GeneralExtractor()

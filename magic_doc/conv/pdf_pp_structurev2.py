@@ -3,7 +3,7 @@ from pathlib import Path
 from magic_pdf.dict2md.ocr_mkcontent import union_make
 from magic_pdf.libs.MakeContentConfig import MakeMode, DropMode
 from magic_pdf.libs.json_compressor import JsonCompressor
-from magic_pdf.model.doc_analyze_by_pp_structurev2 import doc_analyze
+from magic_pdf.model.doc_analyze_by_custom_model import doc_analyze
 from magic_pdf.rw.AbsReaderWriter import AbsReaderWriter
 
 from loguru import logger

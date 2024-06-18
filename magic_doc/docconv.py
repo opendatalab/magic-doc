@@ -24,7 +24,7 @@ from magic_doc.conv.ppt_libreoffice import Ppt
 from magic_doc.conv.pptx_python_pptx import Pptx
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.utils import is_digital
-
+from magic_doc.conv.base import ParseFailed
 
 class ParsePDFType:
     FAST = "fast"
@@ -164,9 +164,11 @@ class DocConverter(object):
         except FunctionTimedOut as e1:
             # logger.exception(e1)
             raise ConvException("Convert timeout.")
-        except Exception as e2:
+        except ParseFailed as e2:
+            raise e2
+        except Exception as e3:
             # logger.exception(e2)
-            raise ConvException("Convert failed: %s" % str(e2))
+            raise ConvException("Convert failed: %s" % str(e3))
 
         return res, cost_time
 

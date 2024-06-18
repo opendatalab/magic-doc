@@ -1,7 +1,7 @@
 import json
 from magic_doc.conv.base import BaseConv
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
-from magic_html import GeneralExtractor
+from magic_doc.contrib.magic_html import GeneralExtractor
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from loguru import logger
 

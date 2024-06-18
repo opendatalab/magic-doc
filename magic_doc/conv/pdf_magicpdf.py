@@ -34,11 +34,10 @@ class SingletonModelWrapper:
             )
         return cls.instance
     
-    def __call__(self, bytes: bytes):
+    def __call__(self, bits: bytes):
         from magic_doc.model.doc_analysis import load_images_from_pdf
-        images = load_images_from_pdf(bytes, dpi=200)
+        images = load_images_from_pdf(bits, dpi=200)
         return self.doc_analysis(images) # type: ignore
-
 
 class Pdf(BaseConv):
     def to_md(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> str:

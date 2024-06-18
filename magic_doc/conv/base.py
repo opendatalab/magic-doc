@@ -14,3 +14,7 @@ class BaseConv(ABC):
     def to_mid_result(self, rw: AbsReaderWriter,  bits: bytes | str, pupdator:ConvProgressUpdator) -> list[dict] | dict:
         pupdator.update(100)
         return {}
+
+
+class ParseFailed(BaseException):
+    pass  

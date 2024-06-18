@@ -36,8 +36,6 @@ urllib3
 Werkzeug==3.0.3
 python-pptx
 s3pathlib
-paddleocr==2.7.3
 PyMuPDF==1.24.5
-fitz
 magic-pdf>=0.5.4
 smart-open[s3]

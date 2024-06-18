@@ -47,10 +47,10 @@ class Pdf(BaseConv):
 
         model_list = model_proc(bits)  # type: ignore
         pupdator.update(50)
-        jso_useful_key = {
-            "_pdf_type": "",
-            "model_list": model_list,
-        }
+        # jso_useful_key = {
+        #     "_pdf_type": "",
+        #     "model_list": model_list,
+        # }
         image_writer = NullWriter()
         pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
         # pipe.pipe_classify() # 默认ocrpipe的时候不需要再做分类，可以节省时间
@@ -68,13 +68,12 @@ class Pdf(BaseConv):
 
         model_list = model_proc(bits)  # type: ignore
         pupdator.update(50)
-        jso_useful_key = {
-            "_pdf_type": "",
-            "model_list": model_list,
-        }
-
+        # jso_useful_key = {
+        #     "_pdf_type": "",
+        #     "model_list": model_list,
+        # }
         pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
-        pipe.pipe_classify()
+        # pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)
 

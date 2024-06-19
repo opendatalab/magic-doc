@@ -25,6 +25,7 @@ from magic_doc.conv.pptx_python_pptx import Pptx
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.utils import is_digital
 from magic_doc.conv.base import ParseFailed
+from magic_doc.common.default_config import DEFAULT_CONFIG, PdfFastParseMethod
 
 
 class ParsePDFType:
@@ -69,7 +70,6 @@ class DocConverter(object):
         self.__temp_dir = temp_dir
         self.__conv_timeout = conv_timeout
         self.__init_conv()
-        self._env_fast_pdf_using_ocr = os.getenv("FAST_PDF_USING_OCR", "FALSE") == "TRUE" 
 
     def __init_conv(self):
         # 根据系统选择doc解析方式
@@ -106,8 +106,15 @@ class DocConverter(object):
             # %PDF
             if check_magic_header(b"%PDF"):
                 if self.parse_pdf_type == ParsePDFType.FAST:
-                    if is_digital(doc_bytes) and not self._env_fast_pdf_using_ocr:
+                    if DEFAULT_CONFIG["pdf"]["fast"]["parsemethod"] == PdfFastParseMethod.AUTO:
+                        if is_digital(doc_bytes):
+                            return self.fast_textpdf_conv
+                        else:
+                            return self.lite_ocrpdf_conv
+                    elif DEFAULT_CONFIG["pdf"]["fast"]["parsemethod"] == PdfFastParseMethod.FAST:
                         return self.fast_textpdf_conv
+                    elif DEFAULT_CONFIG["pdf"]["fast"]["parsemethod"] == PdfFastParseMethod.LITEOCR:
+                        return self.lite_ocrpdf_conv
                     else:
                         return self.lite_ocrpdf_conv
                 else:

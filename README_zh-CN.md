@@ -33,11 +33,11 @@ apt-get/yum/brew install libreoffice
 
 安装 Magic-Doc
 
+
 ```bash
-git clone https://github.com/magicpdf/Magic-Doc (#TODO)
-cd Magic-Doc
-pip install -r requirements.txt
-python setup.py install
+pip install fairy-doc[cpu] # 安装 cpu 版本 
+或 
+pip install fairy-doc[gpu] # 安装 gpu 版本
 ```
 
 

@@ -33,3 +33,4 @@ def get_s3_config(bucket_name: str):
     # logger.info(f"get_s3_config: ak={access_key}, sk={secret_key}, endpoint={storage_endpoint}")
 
     return access_key, secret_key, storage_endpoint
+

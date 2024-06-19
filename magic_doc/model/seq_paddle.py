@@ -1,5 +1,5 @@
 
-from magic_pdf.model.doc_analyze_by_pp_structurev2 import CustomPaddleModel
+from magic_pdf.model.pp_structure_v2 import CustomPaddleModel
 from magic_doc.utils import split_to_chunks
 import paddle 
 from concurrent.futures import ThreadPoolExecutor, as_completed

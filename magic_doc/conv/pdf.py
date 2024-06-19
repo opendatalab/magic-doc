@@ -27,22 +27,22 @@ class Pdf(BaseConv):
             for record in page.get("content_list", []):
                 arr.append(record.get("data", ""))
 
-        text_all = ""
-        for content in arr:
-            text_all += content
+        # text_all = ""
+        # for content in arr:
+        #     text_all += content
+        # def calculate_not_printable_rate(text):
+        #     printable = sum(1 for c in text if c.isprintable())
+        #     total = len(text)
+        #     if total == 0:
+        #         return 0  # 避免除以零的错误
+        #     return (total - printable) / total
+        # not_printable_rate = calculate_not_printable_rate(text_all)
+        # if not_printable_rate > 0.02:
+        #     raise ParseFailed
+        # else:
 
-        def calculate_not_printable_rate(text):
-            printable = sum(1 for c in text if c.isprintable())
-            total = len(text)
-            if total == 0:
-                return 0  # 避免除以零的错误
-            return (total - printable) / total
-        not_printable_rate = calculate_not_printable_rate(text_all)
-        if not_printable_rate > 0.02:
-            raise ParseFailed
-        else:
-            pupdator.update(100)
-            return "\n\n".join(arr)
+        pupdator.update(100)
+        return "\n\n".join(arr)
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ from magic_doc.conv.base import BaseConv
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from magic_doc.utils.null_writer import NullWriter
+from magic_doc.common.default_config import DEFAULT_CONFIG
 
 NULL_IMG_DIR = "/tmp"
 
@@ -23,11 +24,11 @@ class SingletonModelWrapper:
         if not hasattr(cls, "instance"):
             from magic_doc.model.doc_analysis_by_pp import PaddleDocAnalysis
             cls.instance = super(SingletonModelWrapper, cls).__new__(cls)
-            cls.instance.model = PaddleDocAnalysis(model_load_on_each_gpu_count=int(os.getenv("MODEL_LOAD_ON_GPU", 1)))
+            cls.instance.model = PaddleDocAnalysis(model_load_on_each_gpu_count=int(DEFAULT_CONFIG["pdf"]["fast"]["liteocrmodelinstance"]))
         return cls.instance
     
     def __call__(self, bytes: bytes):
-        from magic_pdf.model.doc_analyze_by_pp_structurev2 import load_images_from_pdf
+        from magic_pdf.model.doc_analyze_by_custom_model import load_images_from_pdf
         images = load_images_from_pdf(bytes, dpi=200)
         return self.model(images) # type: ignore
 

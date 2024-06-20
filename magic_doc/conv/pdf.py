@@ -8,11 +8,13 @@ from magic_doc.conv.base import BaseConv
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from magic_doc.conv.base import ParseFailed
-
+from magic_doc.conv.pdf_pp_structurev2 import Pdf as liteOcr
 
 class Pdf(BaseConv):
+    def __init__(self, allowed_failure=True):
+        self.allowed_failure = allowed_failure
+
     def to_md(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> str:
-        # TODO: 单例化模型
         pdf_extractor = PDFExtractor()
         buf = BytesIO(bits)  # type: ignore
         content = pdf_extractor.run("stream io data", FileStorage(buf, "fake.pdf"))
@@ -38,10 +40,14 @@ class Pdf(BaseConv):
              return (total - printable) / total
         not_printable_rate = calculate_not_printable_rate(text_all)
         if not_printable_rate > 0.02:
-             raise ParseFailed
-
-        pupdator.update(100)
-        return "\n\n".join(arr)
+            if self.allowed_failure:
+                raise ParseFailed
+            else:
+                liteOcrPdf = liteOcr()
+                return liteOcrPdf.to_md(bits, pupdator)
+        else:
+            pupdator.update(100)
+            return "\n\n".join(arr)
 
 
 if __name__ == "__main__":

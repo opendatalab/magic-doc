@@ -39,8 +39,8 @@ if __name__ == "__main__":
         },
         license='Apache 2.0',
         extras_require={
-            "gpu": ["paddlepaddle-gpu==2.6.1", "paddleocr==2.7.3", "magic-pdf[gpu]>=0.5.6"],
-            "cpu": ["paddlepaddle==2.5.2", "paddleocr==2.7.3", "magic-pdf[cpu]>=0.5.6"],
+            "gpu": ["paddlepaddle-gpu==2.6.1", "paddleocr==2.7.3", "magic-pdf[gpu]>=0.5.8"],
+            "cpu": ["paddlepaddle==2.5.2", "paddleocr==2.7.3", "magic-pdf[cpu]>=0.5.8"],
         },
         description='A lightweight toolbox to manipulate documents',
         long_description=long_description,
@@ -52,7 +52,9 @@ if __name__ == "__main__":
             "console_scripts": [
                 "magic-doc=magic_doc.cli:cli_conv"
             ],
-        },  # 项目提供的可执行命令
+        }, 
         include_package_data=True,
         zip_safe=False,  # 是否使用 zip 文件格式打包，一般设为 False
     )
+
+    

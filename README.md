@@ -17,6 +17,8 @@
 
 ### Install
 
+Prerequisites: python3.10+
+
 Install Dependencies
 
 **linux/osx** 
@@ -34,12 +36,13 @@ append "install_dir\LibreOffice\program" to ENVIRONMENT PATH
 
 Install Magic-Doc
 
+
 ```bash
-git clone https://github.com/magicpdf/Magic-Doc (#TODO)
-cd Magic-Doc
-pip install -r requirements.txt
-python setup.py install
+pip install fairy-doc[cpu] # cpu version
+or
+pip install fairy-doc[gpu] # gpu version
 ```
+
 
 
 ## Introduction
@@ -57,11 +60,12 @@ markdown_cotent, time_cost = converter("some_doc.pptx", "/tmp/convert_progress.t
 ```
 
 ## Performance
+ENV: AMD EPYC 7742 64-Core Processor, NVIDIA A100
 
 | File Type        | Speed | 
 | ------------------ | -------- | 
 | PDF (digital)        | 347 (page/s) | 
-| PDF (OCR)           | 2.7 (page/s)  |   #TODO 需要更新为多线程版本的 OCR 识别程序
+| PDF (ocr)           | 2.7 (page/s)  | 
 | PPT                 | 20 (page/s)   | 
 | PPTX                | 149 (page/s)   | 
 | DOC                 | 600 (page/s)   | 

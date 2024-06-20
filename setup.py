@@ -48,7 +48,11 @@ if __name__ == "__main__":
         install_requires=parse_requirements("requirements.txt"),  # 项目依赖的第三方库
         url="https://github.com/InternLM/magic-doc",
         python_requires=">=3.10",  # 项目依赖的 Python 版本
-        # entry_points={"console_scripts": ["my_command=my_project.main:run"]}, # 项目提供的可执行命令
+        entry_points={
+            "console_scripts": [
+                "magic-doc=magic_doc.cli:cli_conv"
+            ],
+        },  # 项目提供的可执行命令
         include_package_data=True,
         zip_safe=False,  # 是否使用 zip 文件格式打包，一般设为 False
     )

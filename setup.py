@@ -28,13 +28,14 @@ if __name__ == "__main__":
     setup(
         name="fairy_doc",  # 项目名
         version=__version__,  # 自动从tag中获取版本号
-        packages=find_packages() + ["magic_doc.bin", "magic_doc.resources"],  # 包含所有的包
+        packages=find_packages() + ["magic_doc.bin", "magic_doc.resources", "magic_doc/contrib/magic_html/mmltex"],  # 包含所有的包
         package_data={
             "magic_doc.bin": ["**"],  # 包含magic_doc.bin目录下的所有文件
             "magic_doc.resources": ["**"],  # 包含magic_doc.resources目录下的所有文件
             "magic_doc.contrib.office.formula": [
                 "**"
             ],  # 包含magic_doc.contrib.office.formula目录下的所有文件
+            "magic_doc/contrib/magic_html/mmltex": ["**"],
         },
         license='Apache 2.0',
         extras_require={

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from magic_doc.progress.pupdator import ConvProgressUpdator
 from magic_pdf.rw.AbsReaderWriter import AbsReaderWriter
 class BaseConv(ABC):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         pass
 
     @abstractmethod

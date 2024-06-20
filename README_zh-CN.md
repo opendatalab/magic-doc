@@ -15,6 +15,7 @@
 
 
 ### 安装
+前置依赖： python3.10 + 
 
 安装依赖
 
@@ -56,15 +57,16 @@ markdown_cotent, time_cost = converter("some_doc.pptx", "/tmp/convert_progress.t
 ```
 
 ## 性能
+环境：AMD EPYC 7742 64-Core Processor, NVIDIA A100
 
 | 文件类型        | 转化速度| 
 | ------------------ | -------- | 
-| PDF (digital)        | 347 (page/s) | 
-| PDF (OCR)           | 2.7 (page/s)  |   #TODO 需要更新为多线程版本的 OCR 识别程序
-| PPT                 | 20 (page/s)   | 
-| PPTX                | 149 (page/s)   | 
-| DOC                 | 600 (page/s)   | 
-| DOCX                | 1482 (page/s)   | 
+| PDF (digital)      | 347 (page/s)   | 
+| PDF (ocr)          | 2.7 (page/s)   | 
+| PPT                | 20 (page/s)    | 
+| PPTX               | 149 (page/s)   | 
+| DOC                | 600 (page/s)   | 
+| DOCX               | 1482 (page/s)  | 
 
 
 

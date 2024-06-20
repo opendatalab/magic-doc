@@ -7,6 +7,7 @@ from magic_doc.libs.version import __version__
 from magic_doc.utils.config import get_s3_config
 from magic_doc.utils.path_utils import get_local_dir, parse_s3path, prepare_env
 from magic_doc.docconv import DocConverter, S3Config
+from magic_pdf.cli.magicpdf import do_parse
 from loguru import logger
 
 log_level = "ERROR"
@@ -35,10 +36,11 @@ total_success_convert = 0
 @click.version_option(__version__, "--version", "-v", help="显示版本信息")
 @click.option('-f', '--file-path', 'input_file_path', type=click.STRING,
               help='file path, support s3/local/list, list file need end with ".list"')
-@click.option('-p', '--progress-file-path', 'progress_file_path', default="", type=click.STRING,
+@click.option('-p', '--progress-file-path', 'progress_file_path', default="/tmp/magic_doc_progress.txt", type=click.STRING,
               help='path to the progress file to save')
-@click.option('-t', '--conv-timeout', 'conv_timeout', default=60, type=click.INT, help='timeout')
-def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
+@click.option('-t', '--conv-timeout', 'conv_timeout', default=300, type=click.INT, help='timeout')
+@click.option("-o", "--output", "output", default="", type=click.STRING)
+def cli_conv(input_file_path, progress_file_path, conv_timeout, output):
     global total_cost_time, total_convert_error, total_file_broken, \
         total_unsupported_files, total_time_out, total_success_convert
 
@@ -65,7 +67,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
             logger.info(f"convert {doc_path} to markdown, cost {cost_time} seconds")
             # click.echo(markdown_string)
             base_name, doc_type = os.path.splitext(doc_path)
-            out_put_dir = prepare_env(file_name, doc_type.lstrip(".").lower())
+            out_put_dir = output or prepare_env(file_name, doc_type.lstrip(".").lower())
             with open(os.path.join(out_put_dir, file_name + ".md"), "w", encoding='utf-8') as md_file:
                 md_file.write(markdown_string)
             total_success_convert += 1
@@ -103,6 +105,8 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout=None):
     logger.info(f"total unsupported files: {total_unsupported_files}")
     logger.info(f"total time out: {total_time_out}")
     logger.info(f"total success: {total_success_convert}")
+
+
 
 
 if __name__ == '__main__':

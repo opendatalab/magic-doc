@@ -3,6 +3,7 @@ import os
 from magic_pdf.libs.MakeContentConfig import DropMode, MakeMode
 from magic_pdf.pipe.UNIPipe import UNIPipe
 from magic_pdf.pipe.OCRPipe import OCRPipe
+from magic_pdf.pipe.TXTPipe import TXTPipe
 from magic_doc.conv.base import BaseConv
 
 from magic_doc.progress.filepupdator import FileBaseProgressUpdator
@@ -12,6 +13,7 @@ from magic_doc.utils.null_writer import NullWriter
 from magic_pdf.dict2md.ocr_mkcontent import union_make
 from magic_pdf.libs.json_compressor import JsonCompressor
 from magic_pdf.rw.AbsReaderWriter import AbsReaderWriter
+from magic_doc.common.default_config import DEFAULT_CONFIG, PdfHqParseMethod
 
 
 NULL_IMG_DIR = "/tmp"
@@ -40,6 +42,19 @@ class SingletonModelWrapper:
         return self.doc_analysis(images) # type: ignore
 
 class Pdf(BaseConv):
+
+    def __construct_pdf_pipe(self, bits, model_list, image_writer):
+        if DEFAULT_CONFIG["pdf"]["hq"]["parsemethod"] == PdfHqParseMethod.AUTO:
+            pipe = UNIPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
+        elif DEFAULT_CONFIG["pdf"]["hq"]["parsemethod"] == PdfHqParseMethod.OCR:
+            pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
+        elif DEFAULT_CONFIG["pdf"]["hq"]["parsemethod"] == PdfHqParseMethod.TXT:
+            pipe = TXTPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
+        else:
+            raise Exception("unknown parse method under hq mode")
+        return pipe
+
+
     def to_md(self, bits: bytes | str, pupdator: ConvProgressUpdator) -> str:
         model_proc = SingletonModelWrapper()
         pupdator.update(0)
@@ -51,7 +66,7 @@ class Pdf(BaseConv):
         #     "model_list": model_list,
         # }
         image_writer = NullWriter()
-        pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
+        pipe = self.__construct_pdf_pipe(bits, model_list, image_writer)
         # pipe.pipe_classify() # 默认ocrpipe的时候不需要再做分类，可以节省时间
         pipe.pipe_parse()
         pupdator.update(100)
@@ -71,7 +86,7 @@ class Pdf(BaseConv):
         #     "_pdf_type": "",
         #     "model_list": model_list,
         # }
-        pipe = OCRPipe(bits, model_list, image_writer, is_debug=True)  # type: ignore
+        pipe = self.__construct_pdf_pipe(bits, model_list, image_writer)
         # pipe.pipe_classify()
         pipe.pipe_parse()
         pupdator.update(100)

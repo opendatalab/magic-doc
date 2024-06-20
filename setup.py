@@ -48,7 +48,8 @@ if __name__ == "__main__":
             "console_scripts": [
                 "magic-doc=magic_doc.cli:cli_conv"
             ],
-        },  # 项目提供的可执行命令
+        },
         include_package_data=True,
         zip_safe=False,  # 是否使用 zip 文件格式打包，一般设为 False
     )
+

@@ -80,7 +80,11 @@ class DocConverter(object):
             self.doc_conv = Doc_libreoffice()
         self.docx_conv = Docx()
         self.full_pdf_conv = fullPdf()
-        self.fast_textpdf_conv = fastTextPdf()
+
+        if DEFAULT_CONFIG["pdf"]["fast"]["parsemethod"] == PdfFastParseMethod.AUTO:
+            self.fast_textpdf_conv = fastTextPdf(allowed_failure=False)
+        else:
+            self.fast_textpdf_conv = fastTextPdf()
         self.lite_ocrpdf_conv = liteOcrPdf()
         self.ppt_conv = Ppt()
         self.pptx_conv = Pptx()

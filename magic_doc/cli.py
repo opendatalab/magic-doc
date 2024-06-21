@@ -111,7 +111,7 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout, output):
 parse_pdf_methods = click.Choice(["ocr", "digital", "auto"])
 @click.command()
 @click.option("-m", "--method", "method", type=parse_pdf_methods,
-    help="指定解析方法。txt: 文本型 pdf 解析方法， ocr: 光学识别解析 pdf, auto: 程序智能选择解析方法",
+    help="指定解析方法。digital: 文本型 pdf 解析方法， ocr: 光学识别解析 pdf, auto: 程序智能选择解析方法",
     default="auto")
 @click.option('-f', '--file-path', 'doc_path', type=click.STRING,
               help='file path, support local or s3')

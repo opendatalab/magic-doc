@@ -46,10 +46,10 @@ if __name__ == "__main__":
         python_requires=">=3.10",  # 项目依赖的 Python 版本
         entry_points={
             "console_scripts": [
-                "magic-doc=magic_doc.cli:cli_conv"
+                "magic-doc=magic_doc.cli:cli_conv",
+                "pdf2md=magic_doc.cli:pdf_cli"
             ],
         },
         include_package_data=True,
         zip_safe=False,  # 是否使用 zip 文件格式打包，一般设为 False
     )
-

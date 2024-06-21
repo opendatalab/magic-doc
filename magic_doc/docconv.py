@@ -149,6 +149,9 @@ class DocConverter(object):
                 content_bytes = fin.read()
                 return content_bytes
 
+    def get_raw_file_content(self, doc_path:str) -> bytes:
+        return self.__read_file_as_bytes(doc_path)
+
     def _timeout_convert(
         self,
         byte_content: bytes,

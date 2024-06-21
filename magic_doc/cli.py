@@ -7,8 +7,9 @@ from magic_doc.libs.version import __version__
 from magic_doc.utils.config import get_s3_config
 from magic_doc.utils.path_utils import get_local_dir, parse_s3path, prepare_env
 from magic_doc.docconv import DocConverter, S3Config
-from magic_pdf.cli.magicpdf import do_parse
+
 from loguru import logger
+from magic_doc.conv.pdf_magicpdf import SingletonModelWrapper
 
 log_level = "ERROR"
 log_dir = os.path.join(get_local_dir(), "magic-doc", "logs")
@@ -107,6 +108,51 @@ def cli_conv(input_file_path, progress_file_path, conv_timeout, output):
     logger.info(f"total success: {total_success_convert}")
 
 
+parse_pdf_methods = click.Choice(["ocr", "digital", "auto"])
+@click.command()
+@click.option("-m", "--method", "method", type=parse_pdf_methods,
+    help="指定解析方法。txt: 文本型 pdf 解析方法， ocr: 光学识别解析 pdf, auto: 程序智能选择解析方法",
+    default="auto")
+@click.option('-f', '--file-path', 'doc_path', type=click.STRING,
+              help='file path, support local or s3')
+@click.option("-o", "--output", "output", default="", type=click.STRING)
+@click.option("-d", "--debug", is_flag=True, default=False)
+def pdf_cli(method, doc_path, output, debug):
+    def prepare_env(pdf_file_name, method):
+        local_parent_dir = output
+        local_image_dir = os.path.join(str(local_parent_dir), "images")
+        local_md_dir = local_parent_dir
+        os.makedirs(local_image_dir, exist_ok=True)
+        os.makedirs(local_md_dir, exist_ok=True)
+        return local_image_dir, local_md_dir
+    from magic_pdf.cli import magicpdf 
+    magicpdf.prepare_env = prepare_env
+    
+    from magic_pdf.cli.magicpdf import do_parse
+    model = SingletonModelWrapper() 
+
+    if doc_path.startswith("s3://"):
+        bucket, key = parse_s3path(doc_path)
+        ak, sk, endpoint = get_s3_config(bucket)
+        s3_config = S3Config(ak, sk, endpoint)
+    else:
+        '''非s3路径不需要初始化s3配置'''
+        s3_config = None
+    doc_conv = DocConverter(s3_config)
+    bits = doc_conv.get_raw_file_content(doc_path)
+
+    file_name = str(Path(doc_path).stem)
+    model_list = model(bits)
+
+    if method == "digital":
+        method = "txt"
+    do_parse(file_name, bits, model_list, method, f_draw_span_bbox=False,
+            f_draw_layout_bbox=debug,
+            f_dump_md=True,
+            f_dump_middle_json=False,
+            f_dump_model_json=False,
+            f_dump_orig_pdf=False,
+            f_dump_content_list=False)
 
 
 if __name__ == '__main__':

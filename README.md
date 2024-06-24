@@ -73,9 +73,7 @@ ENV: AMD EPYC 7742 64-Core Processor, NVIDIA A100
 
 ### All Thanks To Our Contributors:
 
-<a href="https://github.com/magicpdf/Magic-Doc/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=magicpdf/Magic-Doc" />
-</a>
+![image](https://github.com/magicpdf/Magic-Doc/assets/contributor.png)
 
 ## License
 

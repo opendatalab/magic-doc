@@ -146,13 +146,13 @@ def pdf_cli(method, doc_path, output, debug):
 
     if method == "digital":
         method = "txt"
-    do_parse(file_name, bits, model_list, method, f_draw_span_bbox=False,
+    do_parse(file_name, bits, model_list, method, f_draw_span_bbox=debug,
             f_draw_layout_bbox=debug,
             f_dump_md=True,
-            f_dump_middle_json=False,
-            f_dump_model_json=False,
-            f_dump_orig_pdf=False,
-            f_dump_content_list=False)
+            f_dump_middle_json=debug,
+            f_dump_model_json=debug,
+            f_dump_orig_pdf=debug,
+            f_dump_content_list=debug)
 
 
 if __name__ == '__main__':

@@ -35,8 +35,8 @@ if __name__ == "__main__":
         },
         license='Apache 2.0',
         extras_require={
-            "gpu": ["paddlepaddle-gpu==2.6.1", "paddleocr==2.7.3", "magic-pdf[gpu]>=0.5.9"],
-            "cpu": ["paddlepaddle==2.5.2", "paddleocr==2.7.3", "magic-pdf[cpu]>=0.5.9"],
+            "gpu": ["paddlepaddle-gpu==2.6.1", "paddleocr==2.7.3", "magic-pdf[gpu]>=0.5.10"],
+            "cpu": ["paddlepaddle==2.5.2", "paddleocr==2.7.3", "magic-pdf[cpu]>=0.5.10"],
         },
         description='A lightweight toolbox to manipulate documents',
         long_description=long_description,

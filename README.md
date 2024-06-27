@@ -70,7 +70,7 @@ markdown_cotent, time_cost = converter.convert("s3://some_bucket/some_doc.pptx",
 
 ## Performance
 
-ENV: AMD EPYC 7742 64-Core Processor, NVIDIA A100, Centos
+ENV: AMD EPYC 7742 64-Core Processor, NVIDIA A100, Centos 7
 
 | File Type        | Speed | 
 | ------------------ | -------- | 

@@ -118,6 +118,9 @@ parse_pdf_methods = click.Choice(["ocr", "digital", "auto"])
 @click.option("-o", "--output", "output", default="", type=click.STRING)
 @click.option("-d", "--debug", is_flag=True, default=False)
 def pdf_cli(method, doc_path, output, debug):
+
+    os.environ["APPLY_FORMULA"] = "TRUE"
+
     def prepare_env(pdf_file_name, method):
         local_parent_dir = output
         local_image_dir = os.path.join(str(local_parent_dir), "images")

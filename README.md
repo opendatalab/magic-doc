@@ -56,7 +56,7 @@ Magic-Doc is a lightweight open-source tool that allows users to convert mulitpl
 # for local file
 from magic_doc.docconv import DocConverter, S3Config
 converter = DocConverter(s3_config=None)
-markdown_cotent, time_cost = converter.convert("some_doc.pptx", "/tmp/convert_progress.txt", conv_timeout=300)
+markdown_cotent, time_cost = converter.convert("some_doc.pptx", conv_timeout=300)
 ```
 
 ```python
@@ -65,7 +65,7 @@ from magic_doc.docconv import DocConverter, S3Config
 
 s3_config = S3Config(ak='${ak}', sk='${sk}', endpoint='${endpoint}')
 converter = DocConverter(s3_config=s3_config)
-markdown_cotent, time_cost = converter.convert("s3://some_bucket/some_doc.pptx", "/tmp/convert_progress.txt", conv_timeout=300)
+markdown_cotent, time_cost = converter.convert("s3://some_bucket/some_doc.pptx", conv_timeout=300)
 ```
 
 ## Performance

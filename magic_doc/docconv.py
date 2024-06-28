@@ -188,7 +188,7 @@ class DocConverter(object):
 
         return res, cost_time
 
-    def convert(self, doc_path: str, progress_file_path: str, conv_timeout=None):
+    def convert(self, doc_path: str, progress_file_path: str = "/tmp/magic_doc_convert_progress.txt", conv_timeout=None):
         """
         在线快速解析
         doc_path: str, path to the document, support local file path and s3 path.
@@ -202,7 +202,7 @@ class DocConverter(object):
         )
 
     def convert_to_mid_result(
-        self, doc_path: str, progress_file_path: str, conv_timeout=None
+        self, doc_path: str, progress_file_path: str = "/tmp/magic_doc_convert_progress.txt", conv_timeout=None
     ):
         """
         在线快速解析

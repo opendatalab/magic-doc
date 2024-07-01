@@ -15,7 +15,7 @@ class SeqPaddle:
         """
         results = [] 
         for idx, img in params:
-            ocr_res = self.model(img)
+            ocr_res = self.model(img) or []
             results.append((idx, ocr_res))
 
         return results 

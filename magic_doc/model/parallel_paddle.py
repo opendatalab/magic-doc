@@ -26,9 +26,8 @@ class ParallelPaddle:
         def run_ocr(chunk, i):
             result = []
             for idx, img in chunk:
-                ocr_res = self.models[i](img)
-                if ocr_res:
-                    result.append((idx, ocr_res))
+                ocr_res = self.models[i](img) or []
+                result.append((idx, ocr_res))
             return result
 
         with ThreadPoolExecutor(max_workers=len(chunks)) as executor:

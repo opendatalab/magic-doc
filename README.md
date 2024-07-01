@@ -2,9 +2,9 @@
 <div id="top"></div>
 <div align="center">
 
-[![license](https://img.shields.io/github/license/magicpdf/Magic-Doc.svg)](https://github.com/magicpdf/Magic-Doc/tree/main/LICENSE)
-[![issue resolution](https://img.shields.io/github/issues-closed-raw/magicpdf/Magic-Doc)](https://github.com/magicpdf/Magic-Doc/issues)
-[![open issues](https://img.shields.io/github/issues-raw/magicpdf/Magic-Doc)](https://github.com/magicpdf/Magic-Doc/issues)
+[![license](https://img.shields.io/github/license/InternLM/magic-doc.svg)](https://github.com/InternLM/magic-doc/tree/main/LICENSE)
+[![issue resolution](https://img.shields.io/github/issues-closed-raw/InternLM/magic-doc)](https://github.com/InternLM/magic-doc/issues)
+[![open issues](https://img.shields.io/github/issues-raw/InternLM/magic-doc)](https://github.com/InternLM/magic-doc/issues)
 
 [English](READMD.md) | [简体中文](README_zh-CN.md)
 
@@ -83,7 +83,7 @@ ENV: AMD EPYC 7742 64-Core Processor, NVIDIA A100, Centos 7
 
 ### All Thanks To Our Contributors:
 
-![image](https://github.com/magicpdf/Magic-Doc/blob/main/assets/contributor.png)
+![image](https://github.com/InternLM/magic-doc/blob/main/assets/contributor.png)
 
 ## License
 

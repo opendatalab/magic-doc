@@ -38,18 +38,3 @@ class PptExtractor(OfficeExtractor):
         return response.json()["pages"]
 
 
-if __name__ == "__main__":
-    e = PptExtractor()
-    print(
-        json.dumps(
-            e.run(
-                "def",
-                Path(
-                    "/home/SENSETIME/wuziming/diclm/doc2docx/doc/【中繁-课件】物理学简介.ppt",
-                ),
-            ),
-            ensure_ascii=False,
-            indent=4,
-        )
-    )
-    e.wait_all()

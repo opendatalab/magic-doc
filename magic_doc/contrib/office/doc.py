@@ -95,14 +95,3 @@ class DocExtractor(OfficeExtractor):
 
         return pages
 
-
-if __name__ == "__main__":
-    e = DocExtractor()
-    print(
-        json.dumps(
-            e.run("abc", Path("/home/SENSETIME/wuziming/diclm/doc2docx/doc/md4.doc")),
-            ensure_ascii=False,
-            indent=4,
-        ),
-    )
-    e.wait_all()

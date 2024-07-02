@@ -22,7 +22,6 @@ class ParallelOCR:
         chunks = list(split_to_chunks(params, max(math.ceil(len(params) *1.0/ len(self.models)), 1)))
         return self._run_ocr_concurrently(chunks)
 
-
     def _run_ocr_concurrently(self, chunks):
         results = []
 

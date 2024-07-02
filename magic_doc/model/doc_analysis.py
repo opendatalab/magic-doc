@@ -178,7 +178,6 @@ class DocAnalysis(object):
             doc_layout_result.append(layout_res)
         
         if self.apply_formula:
-            # 公式识别，因为识别速度较慢，为了提速，把单个pdf的所有公式裁剪完，一起批量做识别。
             a = time.time()
             dataset = MathDataset(mf_image_list, transform=self.mfr_transform)
             dataloader = DataLoader(dataset, batch_size=128, num_workers=32)
@@ -197,7 +196,6 @@ class DocAnalysis(object):
             )
 
         if self.apply_ocr:
-            # ocr识别
             ocr_det_reqs = []
 
             a = time.time()
@@ -223,7 +221,7 @@ class DocAnalysis(object):
                         4,
                         6,
                         7,
-                    ]:  # 需要进行ocr的类别
+                    ]:
                         xmin, ymin = int(res["poly"][0]), int(res["poly"][1])
                         xmax, ymax = int(res["poly"][4]), int(res["poly"][5])
                         crop_box = [xmin, ymin, xmax, ymax]

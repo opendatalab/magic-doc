@@ -215,31 +215,3 @@ class GeneralOfficeExtractor(OfficeExtractor):
 
                 return [page]
 
-
-if __name__ == "__main__":
-    e = GeneralOfficeExtractor()
-    files = [
-        # "/home/SENSETIME/wuziming/doc/doc/【英文-课件】MIT15_082JF10_lec10.3MB.ppt",
-        # "/home/SENSETIME/wuziming/doc/doc/【英文-课件】MIT15_082JF10_lec17.8MB.ppt",
-        # "/home/SENSETIME/wuziming/doc/doc/【英文-课件】MIT15_082JF10_lec18.4MB.ppt",
-        "/home/SENSETIME/wuziming/doc/doc/【中简】商业项目市场分析与产品定位报告.ppt",
-        # "/home/SENSETIME/wuziming/doc/doc/【英文-习题】MIT_prs_w01d1.doc",
-        # "/home/SENSETIME/wuziming/doc/doc/【英文-习题】MIT_prs_w05d2.doc",
-        # "/home/SENSETIME/wuziming/doc/doc/【中简】模电自测第四版.doc",
-    ]
-
-    import uuid
-
-    for f in files:
-        id = uuid.uuid4().hex
-        x = e.run(id, Path(f))
-
-        content = ""
-        for p in x:
-            content += f"\n====== page {p['page_no']} ======\n"
-            for pp in p["content_list"]:
-                content += pp["data"] + "\n"
-
-        print(content)
-
-    e.wait_all()

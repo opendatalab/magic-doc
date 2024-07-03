@@ -2,9 +2,10 @@ import pytest
 import os
 from lib import common
 import logging
+from conf import conf
 
-code_path = "magic_doc"  # 假设代码路径已经在配置文件中设置
-output_path = "magic_doc/datas_new"  # 输出路径
+code_path = conf.conf["code_path"] 
+output_path = conf.conf["pdf_res_path"]
 
 class TestDocConversion:
 
@@ -13,7 +14,7 @@ class TestDocConversion:
         将DOC文件转换为Markdown
         """
         file_path = os.path.join(code_path, "datas/test01.doc")
-        cmd = f"python {code_path}/cli.py --file-path {file_path} --output {output_path}"
+        cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果
@@ -23,7 +24,7 @@ class TestDocConversion:
         将DOCX文件转换为Markdown
         """
         file_path = os.path.join(code_path, "datas/test02.docx")
-        cmd = f"python {code_path}/cli.py --file-path {file_path} --output {output_path}"
+        cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果
@@ -33,7 +34,7 @@ class TestDocConversion:
         将HTML文件转换为Markdown
         """
         file_path = os.path.join(code_path, "datas/test03.html")
-        cmd = f"python {code_path}/cli.py --file-path {file_path} --output {output_path}"
+        cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果
@@ -43,7 +44,7 @@ class TestDocConversion:
         将PDF文件转换为Markdown
         """
         file_path = os.path.join(code_path, "datas/test04.pdf")
-        cmd = f"python {code_path}/cli.py --file-path {file_path} --output {output_path}"
+        cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果
@@ -53,7 +54,7 @@ class TestDocConversion:
         将PPT文件转换为Markdown
         """
         file_path = os.path.join(code_path, "datas/test05.ppt")
-        cmd = f"python {code_path}/cli.py --file-path {file_path} --output {output_path}"
+        cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果
@@ -63,7 +64,7 @@ class TestDocConversion:
         将PPTX文件转换为Markdown
         """
         file_path = os.path.join(code_path, "datas/test06.pptx")
-        cmd = f"python {code_path}/cli.py --file-path {file_path} --output {output_path}"
+        cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果

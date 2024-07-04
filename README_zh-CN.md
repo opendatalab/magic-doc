@@ -5,6 +5,10 @@
 [![issue resolution](https://img.shields.io/github/issues-closed-raw/InternLM/magic-doc)](https://github.com/InternLM/magic-doc/issues)
 [![open issues](https://img.shields.io/github/issues-raw/InternLM/magic-doc)](https://github.com/InternLM/magic-doc/issues)
 
+<p align="center">
+    👋 加入我们 <a href="https://discord.gg/xa29JuW87d" target="_blank">Discord</a> 和 <a href="https://github.com/InternLM/InternLM/assets/25839884/a6aad896-7232-4220-ac84-9e070c2633ce" target="_blank">微信社区</a>
+</p>
+
 [English](README.md) | [简体中文](README_zh-CN.md)
 
 </div>
@@ -15,7 +19,7 @@
 
 
 ### 安装
-前置依赖： python3.10 + 
+前置依赖： python3.10
 
 安装依赖
 
@@ -44,7 +48,7 @@ pip install fairy-doc[gpu] # 安装 gpu 版本
 
 ## 简介
 
-Magic-Doc 是一个轻量级、开源的用于将多种格式的文档（PPT/PPTX/DOC/DOCX/PDF) 转化为 markdown 格式的工具。支持转换本地文档或者位于 AWS S3 上的文件
+Magic-Doc 是一个轻量级、开源的用于将多种格式的文档（PPT/PPTX/DOC/DOCX/PDF）转化为 markdown 格式的工具。支持转换本地文档或者位于 AWS S3 上的文件
 
 
 ## 使用示例
@@ -53,7 +57,7 @@ Magic-Doc 是一个轻量级、开源的用于将多种格式的文档（PPT/PPT
 # for local file
 from magic_doc.docconv import DocConverter, S3Config
 converter = DocConverter(s3_config=None)
-markdown_cotent, time_cost = converter.convert("some_doc.pptx", conv_timeout=300)
+markdown_content, time_cost = converter.convert("some_doc.pptx", conv_timeout=300)
 ```
 
 ```python
@@ -62,7 +66,7 @@ from magic_doc.docconv import DocConverter, S3Config
 
 s3_config = S3Config(ak='${ak}', sk='${sk}', endpoint='${endpoint}')
 converter = DocConverter(s3_config=s3_config)
-markdown_cotent, time_cost = converter.convert("s3://some_bucket/some_doc.pptx", conv_timeout=300)
+markdown_content, time_cost = converter.convert("s3://some_bucket/some_doc.pptx", conv_timeout=300)
 ```
 
 
@@ -78,6 +82,17 @@ markdown_cotent, time_cost = converter.convert("s3://some_bucket/some_doc.pptx",
 | DOC                | 600 (page/s)   | 
 | DOCX               | 1482 (page/s)  | 
 
+
+## 🖊️ 引用
+
+```bibtex
+@misc{2024magic-doc,
+    title={Magic-Doc: A Toolkit that Converts Multiple File Types to Markdown},
+    author={Magic-Doc Contributors},
+    howpublished = {\url{https://github.com/InternLM/magic-doc}},
+    year={2024}
+}
+```
 
 
 ## 开源许可证

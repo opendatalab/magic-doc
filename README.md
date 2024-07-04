@@ -21,7 +21,7 @@
 
 ### Install
 
-Prerequisites: python3.10+
+Prerequisites: python3.10
 
 Install Dependencies
 

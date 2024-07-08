@@ -83,6 +83,14 @@ markdown_content, time_cost = converter.convert("s3://some_bucket/some_doc.pptx"
 | DOCX               | 1482 (page/s)  | 
 
 
+## 致谢
+
+- [Antiword](https://github.com/rsdoiel/antiword)
+- [LibreOffice](https://www.libreoffice.org/)
+- [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/)
+- [paddleocr](https://github.com/PaddlePaddle/PaddleOCR)
+
+
 ## 🖊️ 引用
 
 ```bibtex

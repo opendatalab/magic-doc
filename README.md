@@ -85,9 +85,17 @@ ENV: AMD EPYC 7742 64-Core Processor, NVIDIA A100, Centos 7
 | DOC                 | 600 (page/s)   | 
 | DOCX                | 1482 (page/s)   | 
 
-### All Thanks To Our Contributors:
+## All Thanks To Our Contributors:
 
 ![image](https://github.com/InternLM/magic-doc/blob/main/assets/contributor.png)
+
+
+## Acknowledgments
+
+- [Antiword](https://github.com/rsdoiel/antiword)
+- [LibreOffice](https://www.libreoffice.org/)
+- [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/)
+- [paddleocr](https://github.com/PaddlePaddle/PaddleOCR)
 
 
 ## 🖊️ Citation

@@ -43,7 +43,7 @@ if __name__ == "__main__":
         long_description_content_type='text/markdown',
         install_requires=parse_requirements("requirements.txt"),  # 项目依赖的第三方库
         url="https://github.com/InternLM/magic-doc",
-        python_requires="==3.10",  # 项目依赖的 Python 版本
+        python_requires=">=3.10, <3.11",  # 项目依赖的 Python 版本
         entry_points={
             "console_scripts": [
                 "magic-doc=magic_doc.cli:cli_conv",

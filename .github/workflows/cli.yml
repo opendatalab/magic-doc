@@ -33,7 +33,7 @@ jobs:
       run: |
         pip install -r requirements.txt
         pip install -r requirements-qa.txt
-        yum install libreoffice
+        apt-get install libreoffice
         pip install fairy-doc[cpu]
     - name: test_cli
       run: |

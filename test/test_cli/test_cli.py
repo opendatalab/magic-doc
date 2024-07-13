@@ -1,8 +1,8 @@
 import pytest
 import os
-from lib import common
 import logging
 from conf import conf
+from magic_doc.docconv import DocConverter, S3Config
 
 code_path = conf.conf["code_path"] 
 output_path = conf.conf["pdf_res_path"]
@@ -68,6 +68,51 @@ class TestDocConversion:
         logging.info(cmd)
         common.check_shell(cmd)
         # 这里可以添加更多的检查函数来验证转换结果
+
+    def test_convert_pptx_to_md_sdk(self):
+        """
+        sdk转换PPTx文件为Markdown
+        """
+        # for local file
+        file_path = os.path.join(code_path, "datas/test06.pptx")
+        converter = DocConverter(s3_config=None)
+        markdown_content, time_cost = converter.convert(file_path, conv_timeout=300)
+        assert len(markdown_content) > 0
+        assert time_cost > 0
+
+    def test_convert_pdf_to_md_sdk(self):
+        """
+        sdk转换PDF文件为Markdown
+        """
+        # for local file
+        file_path = os.path.join(code_path, "datas/test04.pdf")
+        converter = DocConverter(s3_config=None)
+        markdown_content, time_cost = converter.convert(file_path, conv_timeout=300)
+        assert len(markdown_content) > 0
+        assert time_cost > 0
+    
+    def test_convert_doc_to_md_sdk(self):
+        """
+        sdk转换DOC文件为Markdown
+        """
+        # for local file
+        file_path = os.path.join(code_path, "datas/test01.doc")
+        converter = DocConverter(s3_config=None)
+        markdown_content, time_cost = converter.convert(file_path, conv_timeout=300)
+        assert len(markdown_content) > 0
+        assert time_cost > 0
+
+    def test_convert_docx_to_md_sdk(self):
+        """
+        sdk转换DOCX文件为Markdown
+        """
+        # for local file
+        file_path = os.path.join(code_path, "datas/test02.docx")
+        converter = DocConverter(s3_config=None)
+        markdown_content, time_cost = converter.convert(file_path, conv_timeout=300)
+        assert len(markdown_content) > 0
+        assert time_cost > 0
+
 
 if __name__ == "__main__":
     pytest.main(["-v", __file__])

@@ -21,13 +21,13 @@ class Pptx(BaseConv):
         for index, page in enumerate(page_list):
             progress = 50 + int(index / total * 50)
             # logger.info(f"progress: {progress}")
-            page_content_list = page['content_list']
+            page_content_list = page["content_list"]
             for content in page_content_list:
                 pupdator.update(progress)
-                if content['type'] == 'image':
+                if content["type"] == "image":
                     pass
-                elif content['type'] == "text":
-                    data = content['data']
+                elif content["type"] == "text":
+                    data = content["data"]
                     md_content_list.append(data)
         return "\n".join(md_content_list)
 
@@ -39,13 +39,41 @@ class Pptx(BaseConv):
             file_path = temp_dir / "tmp.pptx"
             file_path.write_bytes(bits)
             pptx_extractor = PptxExtractor()
-            pages = pptx_extractor.extract(file_path, "tmp", temp_dir, media_dir, True)
+            pages = pptx_extractor.extract(file_path)
             pupdator.update(50)
             return pages
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pupdator = FileBaseProgressUpdator("/tmp/p.txt")
     pptx = Pptx()
-    logger.info(
-        pptx.to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\【英文-模板】Professional Pack Standard.pptx", "rb").read(), pupdator))
+    if 0:
+        logger.info(
+            pptx.to_md(
+                open(
+                    r"D:\project\20240514magic_doc\doc_ppt\doc\【英文-模板】Professional Pack Standard.pptx",
+                    "rb",
+                ).read(),
+                pupdator,
+            )
+        )
+    if 0:
+        print(
+            pptx.to_md(
+                open(
+                    r"/opt/data/magic_doc/20240605/doc/【英文-模板】Professional Pack Standard.pptx",
+                    "rb",
+                ).read(),
+                pupdator,
+            )
+        )
+    if 1:
+        print(
+            pptx.to_md(
+                open(
+                    r"/home/PJLAB/xurui1/Git/Magic-Doc/MIT15_082JF10_lec10.3MB.pptx",
+                    "rb",
+                ).read(),
+                pupdator,
+            )
+        )

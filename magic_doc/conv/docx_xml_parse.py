@@ -49,4 +49,7 @@ class Docx(BaseConv):
 if __name__ == '__main__':
     pupdator = FileBaseProgressUpdator("/tmp/p.txt")
     docx = Docx()
-    logger.info(docx.to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read(), pupdator))
+    if 0:
+        logger.info(docx.to_md(open(r"D:\project\20240514magic_doc\doc_ppt\doc\demo\文本+表+图.docx", "rb").read(), pupdator))
+    if 1:
+        print(docx.to_md(Path("/opt/data/magic_doc/20240605/doc/星际迷航.docx").read_bytes(), pupdator))

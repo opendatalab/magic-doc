@@ -57,13 +57,6 @@ class DocExtractor(OfficeExtractor):
         with open(pure_text_path, "r") as f:
             content = f.read()
 
-        # img_map: dict[Path, str] = {}
-        # imgs = media_dir.glob("*")
-        # for img in imgs:
-        #     img_map[img] = self.generate_img_path(id, img.name)
-        #
-        # self.upload_background(id, img_map)
-
         pages = [
             Page(page_no=idx, content=x)
             for idx, x in enumerate(content.split("[pedia-page]"))
@@ -80,14 +73,8 @@ class DocExtractor(OfficeExtractor):
             for content in content_list:
                 if not content["data"].startswith("[pedia-"):
                     continue
-                if content["data"] == "[pedia-badpic]":
-                    content["data"] = ""
-                    content["type"] = "image"
-                elif content["data"].startswith("[pedia-pic"):
-                    content["type"] = "image"
-                    img_name = content["data"][len("[pedia-") : -1]
-                    img_path = media_dir.joinpath(img_name)
-                    content["data"] = img_map[img_path]
+                if content["data"] == "[pedia-badpic]" or content["data"].startswith("[pedia-pic"):
+                    continue
                 else:
                     content["data"] = content["data"] + "\n"
 

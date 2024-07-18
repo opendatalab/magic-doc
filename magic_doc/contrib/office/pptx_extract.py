@@ -7,10 +7,8 @@ from typing import List
 from loguru import logger
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
-from pptx.parts.image import Image
 from pptx.presentation import Presentation as ppt
 from pptx.shapes.autoshape import Shape
-from pptx.shapes.picture import Picture
 from pptx.shapes.graphfrm import GraphicFrame
 from pptx.table import Table, _Row, _Cell
 from pptx.slide import Slide
@@ -32,10 +30,6 @@ class PptxExtractor(OfficeExtractor):
         self,
         shape: Shape,
         content_list: List[Content],
-        media_dir: Path,
-        img_map: dict[Path, str],
-        id: str,
-        skip_image: bool,
     ):
         if shape.has_text_frame:
             for paragraph in shape.text_frame.paragraphs:
@@ -45,16 +39,8 @@ class PptxExtractor(OfficeExtractor):
                         data=paragraph.text + "\n",
                     )
                 )
-        elif shape.shape_type == MSO_SHAPE_TYPE.PICTURE and not skip_image:
-            shape: Picture
-            image: Image = shape.image
-            image_bytes = image.blob
-            img_path = media_dir.joinpath(f"pic-{len(img_map)}.{image.ext}")
-            img_s3_path = self.generate_img_path(id, img_path.name)
-            img_map[img_path] = img_s3_path
-            content_list.append(Content(type="image", data=img_s3_path))
-            with open(img_path, "wb") as file:
-                file.write(image_bytes)
+        elif shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+            pass
         elif shape.shape_type == MSO_SHAPE_TYPE.TABLE:
             shape: GraphicFrame
             table: Table = shape.table
@@ -75,7 +61,7 @@ class PptxExtractor(OfficeExtractor):
         elif shape.shape_type == MSO_SHAPE_TYPE.GROUP:
             shape: GroupShape
             for sub_shape in shape.shapes:
-                self.handle_shape(sub_shape, content_list, media_dir, img_map, id, skip_image)
+                self.handle_shape(sub_shape, content_list)
         else:
             # print(shape.shape_type, type(shape), file=sys.stderr)
             pass
@@ -83,14 +69,9 @@ class PptxExtractor(OfficeExtractor):
     def extract(
         self,
         r: FileStorage | Path,
-        id: str,
-        dir: Path,
-        media_dir: Path,
-        skip_image: bool,
     ) -> ExtractResponse:
         pages = []
-        img_map = {}
-
+   
         presentation: ppt = Presentation(r)
         for page_no, slide in enumerate(presentation.slides):
             slide: Slide
@@ -99,15 +80,8 @@ class PptxExtractor(OfficeExtractor):
                 self.handle_shape(
                     shape,
                     page["content_list"],
-                    media_dir,
-                    img_map,
-                    id,
-                    skip_image,
                 )
 
             pages.append(page)
-
-        # self.upload_background(id, img_map)
-
         return pages
 

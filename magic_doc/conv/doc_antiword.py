@@ -51,4 +51,14 @@ class Doc(BaseConv):
 if __name__ == '__main__':
     pupdator = FileBaseProgressUpdator("/tmp/p.txt")
     doc = Doc()
-    logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes(), pupdator))
+    if 0:
+        logger.info(doc.to_md(Path("/home/myhloli/文本+表+图1.doc").read_bytes(), pupdator))
+    if 1:
+        print(
+            doc.to_md(
+                Path(
+                    r"/opt/data/magic_doc/20240605/doc/【英文-习题】MIT_prs_w05d2.doc"
+                ).read_bytes(),
+                pupdator,
+            )
+        )

@@ -20,9 +20,7 @@ class DocxExtractor(OfficeExtractor):
 
     def __word2markdown(
         self,
-        id: str,
         docx_file_stream: IO[bytes],
-        save_fig_dir,
     ):
         tag_w = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
         tag_body = f"{tag_w}body"
@@ -119,14 +117,13 @@ class DocxExtractor(OfficeExtractor):
         if type(r) is FileStorage:
             page = Page(
                 page_no=0,
-                content_list=self.__word2markdown(id, r.stream, media_dir),
+                content_list=self.__word2markdown(r.stream),
             )
         else:
             page = Page(
                 page_no=0,
-                content_list=self.__word2markdown(id, open(r, "rb"), media_dir),
+                content_list=self.__word2markdown(open(r, "rb")),
             )
-        # self.clean_up(id)
         return [page]
 
 

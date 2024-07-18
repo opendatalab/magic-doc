@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 class Extractor(ABC):
     @abstractmethod
-    def setup():
+    def setup(self):
         pass
 
     @abstractmethod

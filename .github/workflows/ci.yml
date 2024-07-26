@@ -31,7 +31,7 @@ jobs:
       
     - name: check-requirements
       run: |
-        apt-get intall libreoffice
+        apt-get install libreoffice
         pip install fairy-doc[cpu]
     - name: test_cli
       run: |

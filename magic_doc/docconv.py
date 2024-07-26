@@ -26,6 +26,7 @@ from magic_doc.progress.filepupdator import FileBaseProgressUpdator
 from magic_doc.utils import is_digital
 from magic_doc.conv.base import ParseFailed
 from magic_doc.common.default_config import DEFAULT_CONFIG, PdfFastParseMethod
+from magic_doc.contrib.wrapper_exceptions import NotSupportOcrPDFException
 
 
 class ParsePDFType:
@@ -182,9 +183,11 @@ class DocConverter(object):
             raise ConvException("Convert timeout.")
         except ParseFailed as e2:
             raise e2
-        except Exception as e3:
+        except NotSupportOcrPDFException as e3:
+            raise ParseFailed
+        except Exception as ex:
             # logger.exception(e2)
-            raise ConvException("Convert failed: %s" % str(e3))
+            raise ConvException("Convert failed: %s" % str(ex))
 
         return res, cost_time
 

@@ -16,5 +16,5 @@ class BaseConv(ABC):
         return {}
 
 
-class ParseFailed(BaseException):
+class ParseFailed(Exception):
     pass  

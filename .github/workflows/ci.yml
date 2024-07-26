@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
 jobs:
   cli-test:
-    runs-on: ubuntu-latest
+    runs-on: magicdoc
     timeout-minutes: 90
     strategy:
       fail-fast: true

@@ -5,13 +5,13 @@ name: mineru
 on:
   push:
     branches:
-      - "master"
+      - "main"
     paths-ignore:
       - "cmds/**"
       - "**.md"
   pull_request:
     branches:
-      - "master"
+      - "main"
     paths-ignore:
       - "cmds/**"
       - "**.md"
@@ -19,7 +19,7 @@ on:
 jobs:
   cli-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 90
     strategy:
       fail-fast: true
 

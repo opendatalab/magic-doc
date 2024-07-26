@@ -16,8 +16,8 @@ class TestDocConversion:
         file_path = os.path.join(code_path, "datas/test01.doc")
         cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
-        common.check_shell(cmd)
-        # 这里可以添加更多的检查函数来验证转换结果
+        res = os.system(cmd)
+        assert res == 0 
 
     def test_convert_docx_to_md(self):
         """
@@ -26,8 +26,8 @@ class TestDocConversion:
         file_path = os.path.join(code_path, "datas/test02.docx")
         cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
-        common.check_shell(cmd)
-        # 这里可以添加更多的检查函数来验证转换结果
+        res = os.system(cmd)
+        assert res == 0
 
     def test_convert_html_to_md(self):
         """
@@ -36,8 +36,8 @@ class TestDocConversion:
         file_path = os.path.join(code_path, "datas/test03.html")
         cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
-        common.check_shell(cmd)
-        # 这里可以添加更多的检查函数来验证转换结果
+        res = os.system(cmd)
+        assert res == 0
 
     def test_convert_pdf_to_md(self):
         """
@@ -46,8 +46,8 @@ class TestDocConversion:
         file_path = os.path.join(code_path, "datas/test04.pdf")
         cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
-        common.check_shell(cmd)
-        # 这里可以添加更多的检查函数来验证转换结果
+        res = os.system(cmd)
+        assert res == 0
 
     def test_convert_ppt_to_md(self):
         """
@@ -56,8 +56,8 @@ class TestDocConversion:
         file_path = os.path.join(code_path, "datas/test05.ppt")
         cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
-        common.check_shell(cmd)
-        # 这里可以添加更多的检查函数来验证转换结果
+        res = os.system(cmd)
+        assert res == 0
 
     def test_convert_pptx_to_md(self):
         """
@@ -66,8 +66,8 @@ class TestDocConversion:
         file_path = os.path.join(code_path, "datas/test06.pptx")
         cmd = f"python {code_path}/magic_doc/cli.py --file-path {file_path} --output {output_path}"
         logging.info(cmd)
-        common.check_shell(cmd)
-        # 这里可以添加更多的检查函数来验证转换结果
+        res = os.system(cmd)
+        assert res == 0
 
     def test_convert_pptx_to_md_sdk(self):
         """
